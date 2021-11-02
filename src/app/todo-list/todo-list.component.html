@@ -1,0 +1,26 @@
+<h2>New Task</h2>
+
+<form [formGroup]="newTaskForm">
+  <div>
+    <label for="title"> Title </label>
+    <input id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
+  </div>
+</form>
+
+<h2>Current Tasks</h2>
+
+<div cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
+  <div *ngFor="let task of tasks" class="task-box" cdkDrag >
+    <h3>
+      <a [title]="task.title + ' details'">
+        {{ task.title }}
+      </a>
+    </h3>
+    <p *ngIf="task.description">Description: {{ task.description }}</p>
+  </div>
+</div>
+<!-- 
+Copyright Google LLC. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at https://angular.io/license
+-->
