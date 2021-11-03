@@ -9,16 +9,21 @@
 
 <h2>Current Tasks</h2>
 
-<div cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
-  <div *ngFor="let task of tasks" class="task-box" cdkDrag >
-    <h3>
-      <a [title]="task.title + ' details'">
-        {{ task.title }}
-      </a>
-    </h3>
-    <p *ngIf="task.description">Description: {{ task.description }}</p>
-  </div>
-</div>
+<mat-accordion cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
+  <mat-expansion-panel hideToggle *ngFor="let task of tasks" class="task-box" cdkDrag >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+          {{ task.title }}
+      </mat-panel-title>
+      <mat-panel-description>
+          <div>{{ task.categorie }}</div>
+          <div>{{ task.actor }}</div>
+          <div>{{ task.estimate }}</div>      
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p *ngIf="task.description" >Description: {{ task.description }}</p>
+  </mat-expansion-panel>
+</mat-accordion>
 <!-- 
 Copyright Google LLC. All Rights Reserved.
 Use of this source code is governed by an MIT-style license that
