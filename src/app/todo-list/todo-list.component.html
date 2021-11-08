@@ -1,14 +1,11 @@
 <h2>New Task</h2>
 
 <form [formGroup]="newTaskForm">
-  <div>
-    <label for="title"> Title </label>
-    <input id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
-  </div>
+  <mat-form-field class="new-task-full-width" appearance="fill">
+    <mat-label>Add your task here</mat-label>
+    <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
+  </mat-form-field>
 </form>
-
-<h2>Current Tasks</h2>
-
 <mat-accordion cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
   <mat-expansion-panel hideToggle *ngFor="let task of tasks" class="task-box" cdkDrag >
     <mat-expansion-panel-header>

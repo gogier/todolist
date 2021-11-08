@@ -2,10 +2,13 @@
 .mat-form-field + .mat-form-field {
   margin-left: 8px;
 }
+.new-task-full-width {
+  width: 100%;
+}
 
 .todo-list {
-    width: 1000px;
-    max-width: 100%;
+    /* width: 1000px;
+    max-width: 100%; */
     /* border: solid 1px #ccc; */
     min-height: 60px;
     display: block;
@@ -15,7 +18,7 @@
   }
 
   .todo-list .mat-expansion-panel-header-title {
-    width: 400px;
+    width: 60%;
     justify-content: space-between;
     align-items: left;
   }  
