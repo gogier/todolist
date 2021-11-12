@@ -3,7 +3,7 @@ export interface Task {
   title: string;
   actor: string;
   description: string;
-  categorie: string;
+  category: string;
   estimate: string;
   order: number;
 }
@@ -14,8 +14,8 @@ export const currentTasks = [
     title: 'My first task',
     actor: 'Guillaume',
     description: 'A large phone with one of the best screens',
-    categorie: 'CAT1',
-    estimate: '15min',
+    category: 'CAT1',
+    estimate: '15m',
     order: 3,
   },
   {
@@ -23,8 +23,8 @@ export const currentTasks = [
     title: 'My second action',
     actor: 'Guillaume',
     description: '',
-    categorie: 'CAT1',
-    estimate: '1hour',
+    category: 'CAT1',
+    estimate: '1h',
     order: 2,
   },
   {
@@ -32,8 +32,8 @@ export const currentTasks = [
     title: 'Another activity',
     actor: 'Someone',
     description: 'This is a new task to do',
-    categorie: 'CAT2',
-    estimate: '30min',
+    category: 'CAT2',
+    estimate: '30m',
     order: 1,
   },
 ];

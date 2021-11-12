@@ -1,26 +1,58 @@
-<h2>New Task</h2>
+<mat-sidenav-container class="todo-list-container">
+  <mat-sidenav mode="side" opened position="end" class="todo-list-sidenav" fixedInViewport=false >
+    <form [formGroup]="updateTaskForm" class="update-task-form" (ngSubmit)="updateTask()">
+      <mat-form-field class="formfield-full-width" appearance="fill">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" (keyup.enter)="updateTask()"/>
+      </mat-form-field>
+      <mat-form-field class="formfield-full-width" appearance="fill">
+        <mat-label>Category</mat-label>
+        <input matInput  type="text" formControlName="category" (keyup.enter)="updateTask()"/>
+      </mat-form-field>
+      <mat-form-field class="formfield-full-width" appearance="fill">
+        <mat-label>Actor</mat-label>
+        <input matInput  type="text" formControlName="actor" (keyup.enter)="updateTask()"/>
+      </mat-form-field>
+       <mat-form-field appearance="fill" class="formfield-full-width">
+        <mat-select  formControlName="estimate">
+          <mat-option>None</mat-option>
+          <mat-option value="15m">15m</mat-option>
+          <mat-option value="30m">30m</mat-option>
+          <mat-option value="1h">1h</mat-option>
+          <mat-option value="2h">2h</mat-option>
+          <mat-option value="4h">4h</mat-option>
+          <mat-option value="8h">8h</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="formfield-full-width">
+        <mat-label>Leave a comment</mat-label>
+        <textarea matInput  formControlName="description" placeholder="Add comments here..."></textarea>
+      </mat-form-field>  
+      <button mat-raised-button type="submit" >Sauvegarder</button>   
+    </form>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <h2>New Task</h2>
+    <form [formGroup]="newTaskForm">
+      <mat-form-field class="formfield-full-width" appearance="fill">
+        <mat-label>Add your task here</mat-label>
+        <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
+      </mat-form-field>
+    </form>
+    <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
+      <tr *ngFor="let task of tasks" class="task-box" cdkDrag>
+          <td><mat-icon class="todo-list-drag-drop-icon" >menu</mat-icon></td>
+          <td class="task-title"><button mat-button (click)="selectTask(task)">{{ task.title }}</button> </td>
+          <td class="task-category">{{ task.category }}</td>
+          <td class="task-actor">{{ task.actor }}</td>
+          <td class="task-estimate">{{ task.estimate }}</td>
+      </tr>
+    </table>
+  </mat-sidenav-content>
+</mat-sidenav-container> 
 
-<form [formGroup]="newTaskForm">
-  <mat-form-field class="new-task-full-width" appearance="fill">
-    <mat-label>Add your task here</mat-label>
-    <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
-  </mat-form-field>
-</form>
-<mat-accordion cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
-  <mat-expansion-panel hideToggle *ngFor="let task of tasks" class="task-box" cdkDrag >
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-          {{ task.title }}
-      </mat-panel-title>
-      <mat-panel-description>
-          <div>{{ task.categorie }}</div>
-          <div>{{ task.actor }}</div>
-          <div>{{ task.estimate }}</div>      
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p *ngIf="task.description" >Description: {{ task.description }}</p>
-  </mat-expansion-panel>
-</mat-accordion>
+<!--
+    -->
 <!-- 
 Copyright Google LLC. All Rights Reserved.
 Use of this source code is governed by an MIT-style license that

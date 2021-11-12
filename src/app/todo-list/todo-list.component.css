@@ -1,46 +1,73 @@
 
-.mat-form-field + .mat-form-field {
-  margin-left: 8px;
-}
-.new-task-full-width {
-  width: 100%;
-}
+  .mat-form-field + .mat-form-field {
+    margin-left: 8px;
+  }
+  .formfield-full-width {
+    width: 100%;
+  }
 
-.todo-list {
-    /* width: 1000px;
-    max-width: 100%; */
+  .todo-list-sidenav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+
+  .todo-list {
+    width: 100%;
+    max-width: 100%; 
     /* border: solid 1px #ccc; */
     min-height: 60px;
+    height:500px;
     display: block;
     background: white;
     border-radius: 4px;
     /* overflow: hidden; */
   }
 
-  .todo-list .mat-expansion-panel-header-title {
-    width: 60%;
-    justify-content: space-between;
-    align-items: left;
-  }  
-  .todo-list .mat-expansion-panel-header-description {
-    justify-content: space-between;
-    align-items: right;
-  }  
-
   .task-box {
+    width: 100%;
     padding: 5px 5px;
     border-bottom: solid 1px #ccc;
     color: rgba(0, 0, 0, 0.87);
-    /* display: flex; */
+     display: flex; 
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
-    cursor: move;
+    /*cursor: move;*/
     background: white;
     font-size: 14px;
   }
   
+  .task-title  {    
+    justify-content: left;
+    width: 70%;
+    
+    /*border: solid 1px #ccc; */
+  }
+
+  .task-title .mat-button-base {
+    /*margin: 8px 8px 8px 0;*/
+  }
+
+  .task-category  {  
+    text-align: center;
+    width: 10%;
+    /*border: solid 1px #ccc; */
+  }
+  .task-actor  {  
+    text-align: center;
+    width: 10%;
+    /*border: solid 1px #ccc; */
+  }
+  .task-estimate  {  
+    text-align: center;
+    width: 10%;
+    /*border: solid 1px #ccc; */
+  }
+
   .cdk-drag-preview {
     box-sizing: border-box;
     border-radius: 4px;
@@ -61,7 +88,21 @@
     border: none;
   }
   
-  .todo-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  .todo-list.cdk-drop-list-dragging .task-box:not(.cdk-drag-placeholder) {
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
   
+  .todo-list-drag-drop-icon {
+    cursor: move;
+  }
+
+
+  .update-task-form {
+    min-width: 150px;
+    max-width: 300px;
+    width: 90%; 
+    
+    /*display: flex;*/
+    align-items: center;
+    justify-content: center;
+  }

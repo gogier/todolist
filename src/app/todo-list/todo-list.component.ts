@@ -16,7 +16,19 @@ export class TodoListComponent {
     title: '',
   });
 
+  updateTaskForm = this.formBuilder.group({
+    id: '',
+    title: '',
+    actor: '',
+    description: '',
+    category: '',
+    estimate: '',
+    order: '',
+  })
+
   tasks = currentTasks;
+
+  currentTaskToUpdate: Task = {} as Task;
 
   /* On init : SORT Task */
   ngOnInit() {
@@ -36,12 +48,12 @@ export class TodoListComponent {
     var match = this.newTaskForm.value.title.match(regexpTask);
 
     var newTaskTitle = this.newTaskForm.value.title;
-    var newTaskCategorie = '';
+    var newTaskCategory = '';
     var newTaskActor = '';
 
     if (match != null) {
       newTaskTitle = match[2];
-      newTaskCategorie = match[1];
+      newTaskCategory = match[1];
       newTaskActor = match[3];
     }
 
@@ -50,7 +62,7 @@ export class TodoListComponent {
       title: newTaskTitle,
       actor: newTaskActor,
       description: '',
-      categorie: newTaskCategorie,
+      category: newTaskCategory,
       estimate: '',
       order: -1,
     };
@@ -71,6 +83,25 @@ export class TodoListComponent {
   saveOrder() {
     this.tasks.forEach((x,index) => { x.order=index  });
   }
+
+  selectTask(task: Task) {
+    this.updateTaskForm.setValue(task);
+  }
+
+  updateTask() {
+
+    this.tasks.forEach(item =>{
+        if(item.id == this.updateTaskForm.value.id){
+          item.title= this.updateTaskForm.value.title;
+          item.actor= this.updateTaskForm.value.actor;
+          item.description= this.updateTaskForm.value.description;
+          item.category= this.updateTaskForm.value.category;
+          item.estimate= this.updateTaskForm.value.estimate;          
+        }
+    });
+
+  }
+
 }
 
 /*
