@@ -1,0 +1,16 @@
+.category-title {
+    width: 100%;
+    font-weight: bold;
+}
+
+li.category-content {
+    margin-left: 30px;
+    /*display: block;*/
+    /*height: 24px;*/
+}
+.category-content .category-title-task {
+    float:left;
+}
+.category-content .category-actor-task {
+    float:right;
+}

@@ -1,0 +1,8 @@
+<ul *ngFor="let categoryTaskItem of tasks | groupBy: 'category'" >
+    <span class="category-title">{{ categoryTaskItem.key }}</span>
+    <li *ngFor="let task of categoryTaskItem.value" class="category-content">
+        <span class="category-title-task">{{ task.title }}</span>      
+        <span class="category-actor-task">{{ task.actor }}</span>
+         
+    </li>
+</ul>

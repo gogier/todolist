@@ -1,4 +1,15 @@
 
+.todolist-top-bar-spacer {
+    flex: 1 1 auto;
+}
+.button-view-topbar {
+    right: 10px;
+}
+
+.main-title {
+    color:white;
+}
+
 
 /*
 Copyright Google LLC. All Rights Reserved.

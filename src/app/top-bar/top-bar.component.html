@@ -1,6 +1,15 @@
-<a [routerLink]="['/']">
-  <h1>My TODO List</h1>
-</a>
+
+<mat-toolbar color="primary">
+  <a [routerLink]="['/']" class="main-title">My TODO List</a>
+  <span class="todolist-top-bar-spacer"></span>
+  <a routerLink="/" routerLinkActive="active"><button mat-raised-button class="button-view-topbar" aria-label="List View of Tasks">
+    List View
+  </button></a>
+  <a routerLink="/category" routerLinkActive="active">
+  <button mat-raised-button class="button-view-topbar" aria-label="View of tasks by category">
+    Category View
+  </button></a>
+</mat-toolbar>
 
 <!-- 
 Copyright Google LLC. All Rights Reserved.

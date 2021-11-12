@@ -45,21 +45,29 @@ export class TodoListComponent {
 
     console.log('Check RegEx from title value');
     const regexpTask = /(\[.*\])(.*)(\@\w*)/;
-    var match = this.newTaskForm.value.title.match(regexpTask);
+    const catRegExp = /^\[.*\]/;
+    const actorRegExp = /\@\w*/;
 
-    var newTaskTitle = this.newTaskForm.value.title;
+    
+    var filteredTitle = this.newTaskForm.value.title;
     var newTaskCategory = '';
     var newTaskActor = '';
 
-    if (match != null) {
-      newTaskTitle = match[2];
-      newTaskCategory = match[1];
-      newTaskActor = match[3];
+    var categoryMatch = this.newTaskForm.value.title.match(catRegExp);
+    if(categoryMatch!=null) {
+      filteredTitle = filteredTitle.replace(categoryMatch[0], "");
+      newTaskCategory = categoryMatch[0].replace("[","").replace("]","");
+    }
+
+    var actorMatch = this.newTaskForm.value.title.match(actorRegExp);
+    if(actorMatch!=null) {
+      filteredTitle = filteredTitle.replace(actorMatch[0], "");
+      newTaskActor = actorMatch[0].replace("@","");
     }
 
     var newTaskToCreate = {
       id: uuidv4(),
-      title: newTaskTitle,
+      title: filteredTitle,
       actor: newTaskActor,
       description: '',
       category: newTaskCategory,
@@ -102,6 +110,13 @@ export class TodoListComponent {
 
   }
 
+
+
+  logTasks() {
+
+    console.log(this.tasks);
+
+  }
 }
 
 /*

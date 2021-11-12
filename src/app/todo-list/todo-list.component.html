@@ -32,7 +32,7 @@
     </form>
   </mat-sidenav>
   <mat-sidenav-content>
-    <h2>New Task</h2>
+    <button mat-raised-button (click)="logTasks()">Logger</button>  
     <form [formGroup]="newTaskForm">
       <mat-form-field class="formfield-full-width" appearance="fill">
         <mat-label>Add your task here</mat-label>
