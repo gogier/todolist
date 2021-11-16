@@ -5,6 +5,7 @@ export interface Task {
   description: string;
   category: string;
   estimate: string;
+  status: string;
   order: number;
 }
 
@@ -16,6 +17,7 @@ export const currentTasks = [
       "description": "",
       "category": "Mulesoft",
       "estimate": "",
+      "status": "todo",
       "order": 0
   },
   {
@@ -25,6 +27,7 @@ export const currentTasks = [
       "description": "",
       "category": "DevOps/Sonar Cube",
       "estimate": "",
+      "status": "in-progress",
       "order": 1
   },
   {
@@ -34,6 +37,7 @@ export const currentTasks = [
       "description": "",
       "category": "Metrics",
       "estimate": "",
+      "status": "in-progress",
       "order": 2
   },
   {
@@ -43,6 +47,7 @@ export const currentTasks = [
       "description": "",
       "category": "DevOps/Sonar Cube",
       "estimate": "",
+      "status": "done",
       "order": 3
   },
   {
@@ -52,6 +57,7 @@ export const currentTasks = [
       "description": "",
       "category": "Projects/VAPOL",
       "estimate": "",
+      "status": "todo",
       "order": 4
   },
   {
@@ -61,6 +67,7 @@ export const currentTasks = [
       "description": "Création d’un JIRA à Rabie",
       "category": "DevOps",
       "estimate": "",
+      "status": "todo",
       "order": 5
   }
 ];

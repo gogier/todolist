@@ -1,5 +1,8 @@
 <mat-sidenav-container class="todo-list-container">
   <mat-sidenav mode="side" opened position="end" class="todo-list-sidenav" fixedInViewport=false >
+
+    <!-- Update Form on the right -->
+
     <form [formGroup]="updateTaskForm" class="update-task-form" (ngSubmit)="updateTask()">
       <mat-form-field class="formfield-full-width" appearance="fill">
         <mat-label>Title</mat-label>
@@ -32,6 +35,11 @@
     </form>
   </mat-sidenav>
   <mat-sidenav-content>
+    
+    <!-- List Part on the left -->
+    
+
+    <!-- New task Form -->
     <button mat-raised-button (click)="logTasks()">Logger</button>  
     <form [formGroup]="newTaskForm">
       <mat-form-field class="formfield-full-width" appearance="fill">
@@ -39,9 +47,12 @@
         <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
       </mat-form-field>
     </form>
+
+
+    <!-- List Table -->
     <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
       <tr *ngFor="let task of tasks" class="task-box" cdkDrag>
-          <td><mat-icon class="todo-list-drag-drop-icon" >menu</mat-icon></td>
+          <td><a (click)="changeTaskStatus(task)"><mat-icon  >{{ getIconClassFromStatus(task.status) }}</mat-icon></a></td>
           <td class="task-title"><button mat-button (click)="selectTask(task)">{{ task.title }}</button> </td>
           <td class="task-category">{{ task.category }}</td>
           <td class="task-actor">{{ task.actor }}</td>

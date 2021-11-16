@@ -23,6 +23,7 @@ export class TodoListComponent {
     description: '',
     category: '',
     estimate: '',
+    status:'',
     order: '',
   })
 
@@ -72,6 +73,7 @@ export class TodoListComponent {
       description: '',
       category: newTaskCategory,
       estimate: '',
+      status:'',
       order: -1,
     };
     console.log(newTaskToCreate);
@@ -104,10 +106,35 @@ export class TodoListComponent {
           item.actor= this.updateTaskForm.value.actor;
           item.description= this.updateTaskForm.value.description;
           item.category= this.updateTaskForm.value.category;
+          item.status= this.updateTaskForm.value.status;
           item.estimate= this.updateTaskForm.value.estimate;          
         }
     });
 
+  }
+
+
+  changeTaskStatus(task: Task) {
+    if(task.status=='done') {
+      //reopen the task
+      task.status =  'todo';
+    } else if(task.status=='in-progress') {
+      task.status =  'done';
+    } else {
+      //else todo
+      task.status =  'in-progress';
+    }
+    
+  }
+
+  getIconClassFromStatus(status: string) {
+    if(status=='done') {
+      return 'task_alt';
+    } else if(status=='in-progress') {
+      return 'autorenew';
+    }
+    //else todo
+    return 'panorama_fish_eye';
   }
 
 
