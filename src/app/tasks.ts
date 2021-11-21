@@ -7,9 +7,13 @@ export interface Task {
   estimate: string;
   status: string;
   order: number;
+  creationDate: Date; //at creation
+  updateDate: Date; //when updated
+  startDate: Date; //when status to in progress
+  endDate: Date; //when status to done
 }
 
-export const currentTasks = [
+export const currentTasks : Array<Task> = [
   {
       "id": "6d927df3-bfb2-4ede-8eee-a5cf9de28c02",
       "title": " Follow the Mulesoft Support Cases ",
@@ -18,7 +22,11 @@ export const currentTasks = [
       "category": "Mulesoft",
       "estimate": "",
       "status": "todo",
-      "order": 0
+      "order": 0,
+      "creationDate": new Date('2021-10-16T10:00:00.000Z'),
+      "updateDate": new Date("2021-11-16T10:00:00Z"),
+      "startDate": new Date(0),
+      "endDate": new Date(0),
   },
   {
       "id": "32e86dff-5d3b-4b8f-89b1-270d8ad75d30",
@@ -28,7 +36,11 @@ export const currentTasks = [
       "category": "DevOps/Sonar Cube",
       "estimate": "",
       "status": "in-progress",
-      "order": 1
+      "order": 1,
+      "creationDate": new Date("2021-10-16T10:00:00Z"),
+      "updateDate": new Date("2021-11-16T10:00:00Z"),
+      "startDate": new Date("2021-10-16T10:00:00Z"),
+      "endDate": new Date(0),
   },
   {
       "id": "316f3c74-88f7-4a22-9600-37e9f7066d35",
@@ -38,7 +50,11 @@ export const currentTasks = [
       "category": "Metrics",
       "estimate": "",
       "status": "in-progress",
-      "order": 2
+      "order": 2,
+      "creationDate": new Date("2021-10-16T10:00:00Z"),
+      "updateDate": new Date("2021-11-16T10:00:00Z"),
+      "startDate": new Date("2021-10-16T10:00:00Z"),
+      "endDate": new Date(0),
   },
   {
       "id": "403e4f14-2d64-48ec-9e4c-ba94e3802c28",
@@ -48,7 +64,11 @@ export const currentTasks = [
       "category": "DevOps/Sonar Cube",
       "estimate": "",
       "status": "done",
-      "order": 3
+      "order": 3,
+      "creationDate": new Date("2021-10-16T10:00:00Z"),
+      "updateDate": new Date("2021-11-16T10:00:00Z"),
+      "startDate": new Date("2021-10-16T10:00:00Z"),
+      "endDate": new Date("2021-11-16T10:00:00Z"),
   },
   {
       "id": "439df24d-aff6-45a0-bac2-47887ef53dd8",
@@ -58,7 +78,11 @@ export const currentTasks = [
       "category": "Projects/VAPOL",
       "estimate": "",
       "status": "todo",
-      "order": 4
+      "order": 4,
+      "creationDate": new Date("2021-10-16T10:00:00Z"),
+      "updateDate": new Date("2021-11-16T10:00:00Z"),
+      "startDate": new Date(0),
+      "endDate": new Date(0),
   },
   {
       "id": "275c489c-a62e-4047-be1f-e51d6e4d715f",
@@ -68,7 +92,11 @@ export const currentTasks = [
       "category": "DevOps",
       "estimate": "",
       "status": "todo",
-      "order": 5
+      "order": 5,
+      "creationDate": new Date("2021-10-16T10:00:00Z"),
+      "updateDate": new Date("2021-11-16T10:00:00Z"),
+      "startDate": new Date(0),
+      "endDate": new Date(0),
   }
 ];
 
