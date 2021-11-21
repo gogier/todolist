@@ -9,6 +9,7 @@ var BackendApi = /** @class */ (function () {
         var fs = require('fs');
         var rawdata = fs.readFileSync('server/data/saveTasks.json');
         var currentTasksLoaded = JSON.parse(rawdata);
+        var taskFound = req.body;
         var itemFound = false;
         currentTasksLoaded.forEach(function (item) {
             if (item.id == req.params.id) {
@@ -25,6 +26,9 @@ var BackendApi = /** @class */ (function () {
                 item.endDate = req.body.endDate;
                 item.creationDate = req.body.creationDate;
                 item.order = req.body.order;
+                console.log("Order Found : " + req.body.order);
+                console.log("New Order : " + item.order);
+                taskFound = item;
                 itemFound = true;
             }
         });
@@ -32,6 +36,15 @@ var BackendApi = /** @class */ (function () {
             //New task to add
             currentTasksLoaded.push(req.body);
         }
+        //Save in file
+        var data = JSON.stringify(currentTasksLoaded, null, 2);
+        fs.writeFileSync('server/data/saveTasks.json', data);
+        res.json(taskFound);
+    };
+    BackendApi.prototype.updateTasks = function (req, res) {
+        //update the current list
+        var currentTasksLoaded = req.body;
+        var fs = require('fs');
         //Save in file
         var data = JSON.stringify(currentTasksLoaded, null, 2);
         fs.writeFileSync('server/data/saveTasks.json', data);

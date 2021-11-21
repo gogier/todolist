@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { TodoListService } from '../todo-list/todo-list.service';
 
-import { currentTasks, Task } from '../tasks';
+import {  Task } from '../tasks';
 
 @Component({
   selector: 'app-todo-category-view',
@@ -10,17 +11,23 @@ import { currentTasks, Task } from '../tasks';
 export class TodoCategoryViewComponent implements OnInit {
 
 
-  tasks = currentTasks;
+  tasks : Task[] = [];
 
-  constructor() { }
+  constructor(private todolistService: TodoListService) {}
+
 
   ngOnInit(): void {
-    /* Order tasks by category and priority */
+    /* Order tasks by category and priority && a.order > b.order */
 
-    /* this.tasks.sort((a, b) => (a.category < b.category && a.order > b.order) && 1 || -1); */
-
+    this.loadTasks();
+    this.tasks.sort((a, b) => (a.category < b.category ) ? 1 : -1); 
   }
   
+  loadTasks() {
+    this.tasks = [];
+    this.todolistService.getTasks().subscribe(
+        (data: Task[]) => this.tasks = data);
+  }
 
 
 }

@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { GroupByPipe } from './group-by.pipe';
+import { OrderByPipe } from './order-by.pipe';
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
@@ -50,7 +51,8 @@ import { TodoCategoryViewComponent } from './todo-category-view/todo-category-vi
     TopBarComponent,
     TodoListComponent,
     TodoCategoryViewComponent,
-    GroupByPipe
+    GroupByPipe,
+    OrderByPipe
   ],
   bootstrap: [
     AppComponent

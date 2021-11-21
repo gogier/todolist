@@ -47,6 +47,8 @@ var Server = /** @class */ (function () {
         // create routes 
         var api = new backendapi_1.BackendApi();
         // update task API 
+        router.put('/api/tasks', api.updateTasks.bind(api.updateTasks));
+        // update task API 
         router.put('/api/tasks/:id', api.updateTask.bind(api.updateTask));
         // get all tasks API 
         router.get('/api/tasks', api.getTasks.bind(api.getTasks));

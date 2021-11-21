@@ -14,3 +14,8 @@ li.category-content {
 .category-content .category-actor-task {
     float:right;
 }
+.category-content .category-status-task {
+    float:left;
+    padding-right:5px;
+    font-style: italic;
+}

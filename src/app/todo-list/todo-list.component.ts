@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 import { FormBuilder } from '@angular/forms';
-import { currentTasks, Task } from '../tasks';
+import { Task } from '../tasks';
 import { TodoListService } from './todo-list.service';
 
 
@@ -49,17 +49,21 @@ export class TodoListComponent {
 
   /* ADD Task Action */
   addToTodoList(): void {
-    // Process checkout data here
 
-    console.log('Check RegEx from title value');
+
+
+    /* Parse Task title to extract Category and actor */
+    /* Category => [<CategoryName>] */
+    /* Actor => @<ActorName> */
+    /* If no actor : Me as default actor */
+
     const regexpTask = /(\[.*\])(.*)(\@\w*)/;
     const catRegExp = /^\[.*\]/;
     const actorRegExp = /\@\w*/;
-
     
     var filteredTitle = this.newTaskForm.value.title;
     var newTaskCategory = '';
-    var newTaskActor = '';
+    var newTaskActor = 'Guillaume';
 
     var categoryMatch = this.newTaskForm.value.title.match(catRegExp);
     if(categoryMatch!=null) {
@@ -80,7 +84,7 @@ export class TodoListComponent {
       description: '',
       category: newTaskCategory,
       estimate: '',
-      status:'',
+      status:'todo',
       order: -1,
       creationDate: new Date(),
       updateDate:  new Date(0),
@@ -100,6 +104,7 @@ export class TodoListComponent {
   drop(event: CdkDragDrop<Task[]>) {
     moveItemInArray(this.tasks, event.previousIndex, event.currentIndex);
     this.saveOrder();
+    this.selectTask(this.tasks[event.currentIndex]);
   }
 
   /* To be able to keep the order define by the user */
@@ -161,11 +166,6 @@ export class TodoListComponent {
 
 
 
-  logTasks() {
-
-    console.log(this.tasks);
-
-  }
 
   loadTasks() {
     this.tasks = [];
@@ -177,9 +177,7 @@ export class TodoListComponent {
     this.todolistService.updateTask(task).subscribe();
   }
   saveAllTasks() {
-    
-    this.tasks.forEach(item => this.saveTask(item));
-
+    this.todolistService.updateTasks(this.tasks).subscribe();   
   }
 
 }

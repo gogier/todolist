@@ -12,7 +12,7 @@ export class BackendApi {
 
         let rawdata = fs.readFileSync('server/data/saveTasks.json');
         var currentTasksLoaded: Task[] = JSON.parse(rawdata);
-
+        var taskFound : Task = req.body;
         var itemFound = false;
 
         currentTasksLoaded.forEach(item =>{
@@ -30,6 +30,9 @@ export class BackendApi {
                 item.endDate = req.body.endDate;
                 item.creationDate = req.body.creationDate;
                 item.order = req.body.order;
+                console.log("Order Found : " + req.body.order);
+                console.log("New Order : " + item.order);
+                taskFound = item;
                 itemFound = true;
             }
         });
@@ -44,9 +47,25 @@ export class BackendApi {
         
         fs.writeFileSync('server/data/saveTasks.json', data);       
 
-        res.json(data);
+        res.json(taskFound);
     } 
 	
+
+
+    public updateTasks(req: express.Request, res: express.Response) {
+
+        //update the current list
+        var currentTasksLoaded: Task[] = req.body;
+
+        const fs = require('fs');
+        //Save in file
+        let data = JSON.stringify(currentTasksLoaded, null, 2);
+        
+        fs.writeFileSync('server/data/saveTasks.json', data);       
+
+        res.json(data);
+    } 
+
 	
 	public getTasks(req: express.Request, res: express.Response) { 
         const fs = require('fs');

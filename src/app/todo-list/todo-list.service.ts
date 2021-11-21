@@ -18,4 +18,8 @@ export class TodoListService {
   public updateTask(task: Task) : Observable<Task>  {
     return this.http.put<Task>("http://localhost:3000/api/tasks/" + task.id, task,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
+  
+  public updateTasks(tasks: Task[]) : Observable<Task[]>  {
+    return this.http.put<Array<Task>>("http://localhost:3000/api/tasks", tasks,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  }
 }
