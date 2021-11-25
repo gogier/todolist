@@ -2,7 +2,9 @@
   .mat-form-field + .mat-form-field {
     margin-left: 8px;
   }
+  
   .formfield-full-width {
+    margin-left: 8px;
     width: 100%;
   }
 
@@ -10,6 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
   }
 
 
@@ -19,11 +22,12 @@
     max-width: 100%; 
     /* border: solid 1px #ccc; */
     min-height: 60px;
-    height:500px;
+    height:100%;
     display: block;
     background: white;
     border-radius: 4px;
-    /* overflow: hidden; */
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .task-box {
@@ -41,6 +45,8 @@
     font-size: 14px;
   }
   
+  
+
   .task-title  {    
     justify-content: left;
     width: 70%;
@@ -101,8 +107,23 @@
     min-width: 150px;
     max-width: 300px;
     width: 90%; 
+    margin-top: 70px;
     
     /*display: flex;*/
     align-items: center;
     justify-content: center;
+  }
+
+
+  .save-button-icon {
+    margin-bottom: 5px;
+  }
+
+  .user-actor-button {
+    background-color: #ebf2ff;
+  }
+
+  .done-format {
+    text-decoration: line-through;
+    color: rgb(153, 194, 194);
   }

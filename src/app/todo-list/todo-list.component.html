@@ -1,5 +1,5 @@
 <mat-sidenav-container class="todo-list-container">
-  <mat-sidenav mode="side" opened position="end" class="todo-list-sidenav" fixedInViewport=false >
+  <mat-sidenav mode="side" opened position="end" class="todo-list-sidenav" fixedInViewport=true >
 
     <!-- Update Form on the right -->
 
@@ -31,7 +31,7 @@
         <mat-label>Leave a comment</mat-label>
         <textarea matInput  formControlName="description" placeholder="Add comments here..."></textarea>
       </mat-form-field>  
-      <button mat-raised-button type="submit" >Sauvegarder</button>   
+      <button mat-stroked-button type="submit"><mat-icon class="save-button-icon">save</mat-icon>Sauvegarder</button>   
     </form>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -52,10 +52,10 @@
     <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
       <tr *ngFor="let task of tasks" class="task-box" cdkDrag>
           <td><a (click)="changeTaskStatus(task)"><mat-icon  >{{ getIconClassFromStatus(task.status) }}</mat-icon></a></td>
-          <td class="task-title"><button mat-button (click)="selectTask(task)">{{ task.title }}</button> </td>
-          <td class="task-category">{{ task.category }}</td>
-          <td class="task-actor">{{ task.actor }}</td>
-          <td class="task-estimate">{{ task.estimate }}</td>
+          <td class="task-category"><span [class]="getLineStatusClass(task)">{{ task.category }}</span></td>
+          <td class="task-title"><button mat-button (click)="selectTask(task)" ><span [class]="getLineStatusClass(task)">{{ task.title }}</span></button> </td>
+          <td class="task-actor"><button mat-flat-button [class]="getActorColorClass(task)"><span [class]="getLineStatusClass(task)">{{ task.actor }}</span></button></td>
+          <td class="task-estimate"><span [class]="getLineStatusClass(task)">{{ task.estimate }}</span></td>
       </tr>
     </table>
   </mat-sidenav-content>

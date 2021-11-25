@@ -1,3 +1,11 @@
+.top-bar {
+    position: sticky;
+    position: -webkit-sticky; /* For macOS/iOS Safari */
+    top: 0; /* Sets the sticky toolbar to be on top */
+    z-index: 1000; /* Ensure that your app's content doesn't overlap the toolbar */
+}
+
+
 
 .todolist-top-bar-spacer {
     flex: 1 1 auto;
@@ -9,8 +17,6 @@
 .main-title {
     color:white;
 }
-
-
 /*
 Copyright Google LLC. All Rights Reserved.
 Use of this source code is governed by an MIT-style license that

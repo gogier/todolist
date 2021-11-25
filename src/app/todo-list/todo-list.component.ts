@@ -5,6 +5,8 @@ import { FormBuilder } from '@angular/forms';
 import { Task } from '../tasks';
 import { TodoListService } from './todo-list.service';
 
+import { configUser, configApp } from '../../config/config';
+
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -63,7 +65,7 @@ export class TodoListComponent {
     
     var filteredTitle = this.newTaskForm.value.title;
     var newTaskCategory = '';
-    var newTaskActor = 'Guillaume';
+    var newTaskActor = configUser.username;
 
     var categoryMatch = this.newTaskForm.value.title.match(catRegExp);
     if(categoryMatch!=null) {
@@ -84,7 +86,7 @@ export class TodoListComponent {
       description: '',
       category: newTaskCategory,
       estimate: '',
-      status:'todo',
+      status:configApp.status.find(item => item.id='todo')?.id ?? 'todo',
       order: -1,
       creationDate: new Date(),
       updateDate:  new Date(0),
@@ -109,7 +111,7 @@ export class TodoListComponent {
 
   /* To be able to keep the order define by the user */
   saveOrder() {
-    this.tasks.forEach((x,index) => { console.log("Change item " + x.id +  "order=" + x.order + " to " + index); x.order=index;   });
+    this.tasks.forEach((x,index) => { x.order=index;   });
     
     this.saveAllTasks();
   }
@@ -164,6 +166,24 @@ export class TodoListComponent {
     return 'panorama_fish_eye';
   }
 
+  getActorColorClass(task :Task) {
+    //console.log(task.actor);
+    if(task.actor==configUser.username) {
+      return "user-actor-button"
+    } else {
+      return "";
+    }
+  }
+
+  getLineStatusClass(task: Task) {
+
+    if(task.status=='done') {
+      return "done-format"
+    } else {
+      return "";
+    }
+
+  }
 
 
 
