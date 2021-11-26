@@ -7,6 +7,9 @@
     margin-left: 8px;
     width: 100%;
   }
+  .formfield-comment {
+    height: 230px;
+  }
 
   .todo-list-sidenav {
     display: flex;
@@ -126,4 +129,9 @@
   .done-format {
     text-decoration: line-through;
     color: rgb(153, 194, 194);
+  }
+
+  
+  .in-progress-format {
+    color: rgb(44, 165, 64);
   }

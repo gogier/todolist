@@ -179,6 +179,8 @@ export class TodoListComponent {
 
     if(task.status=='done') {
       return "done-format"
+    } else if(task.status=='in-progress') {
+      return "in-progress-format";
     } else {
       return "";
     }
