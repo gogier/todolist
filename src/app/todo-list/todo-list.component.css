@@ -18,6 +18,13 @@
     text-align: center;
   }
 
+  .todo-list-archive {    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
 
 
   .todo-list {
@@ -131,6 +138,10 @@
     color: rgb(153, 194, 194);
   }
 
+  .archive-format {
+    text-decoration: line-through;
+    color: rgb(153, 194, 194);
+  }
   
   .in-progress-format {
     color: rgb(44, 165, 64);

@@ -17,7 +17,8 @@
         <input matInput  type="text" formControlName="actor" (keyup.enter)="updateTask()"/>
       </mat-form-field>
        <mat-form-field appearance="fill" class="formfield-full-width">
-        <mat-select  formControlName="estimate">
+        <mat-label>Estimate</mat-label>
+        <mat-select (selectionChange)="updateTask()" formControlName="estimate">
           <mat-option>None</mat-option>
           <mat-option value="15m">15m</mat-option>
           <mat-option value="30m">30m</mat-option>
@@ -44,13 +45,28 @@
       <mat-form-field class="formfield-full-width" appearance="fill">
         <mat-label>Add your task here</mat-label>
         <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
-      </mat-form-field>
+      </mat-form-field> 
     </form>
+    <div class="todo-list-archive"><button mat-stroked-button (click)="archiveTasks()"><mat-icon>archive</mat-icon></button></div>
 
 
     <!-- List Table -->
     <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
       <tr *ngFor="let task of tasks" class="task-box" cdkDrag>
+          <td><a (click)="changeTaskStatus(task)"><mat-icon  >{{ getIconClassFromStatus(task.status) }}</mat-icon></a></td>
+          <td class="task-category"><span [class]="getLineStatusClass(task)">{{ task.category }}</span></td>
+          <td class="task-title"><button mat-button (click)="selectTask(task)" ><span [class]="getLineStatusClass(task)">{{ task.title }}</span></button> </td>
+          <td class="task-actor"><button mat-flat-button [class]="getActorColorClass(task)"><span [class]="getLineStatusClass(task)">{{ task.actor }}</span></button></td>
+          <td class="task-estimate"><span [class]="getLineStatusClass(task)">{{ task.estimate }}</span></td>
+      </tr>
+    </table>
+    <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
+    <h1>Archive</h1>
+    <mat-divider></mat-divider>
+    <mat-divider></mat-divider>
+    <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
+      <tr *ngFor="let task of archivedTasks" class="task-box" cdkDrag>
           <td><a (click)="changeTaskStatus(task)"><mat-icon  >{{ getIconClassFromStatus(task.status) }}</mat-icon></a></td>
           <td class="task-category"><span [class]="getLineStatusClass(task)">{{ task.category }}</span></td>
           <td class="task-title"><button mat-button (click)="selectTask(task)" ><span [class]="getLineStatusClass(task)">{{ task.title }}</span></button> </td>

@@ -36,6 +36,7 @@ export class TodoListComponent {
   })
 
   tasks:Task[] = [];
+  archivedTasks:Task[] = [];
 
   currentTaskToUpdate: Task = {} as Task;
 
@@ -140,9 +141,12 @@ export class TodoListComponent {
 
 
   changeTaskStatus(task: Task) {
-    if(task.status=='done') {
+    if(task.status=='archive') {
       //reopen the task
       task.status =  'todo';
+    } else if(task.status=='done') {
+      //reopen the task
+      task.status =  'archive';
     } else if(task.status=='in-progress') {
       task.status =  'done';
       task.endDate = new Date();
@@ -177,7 +181,10 @@ export class TodoListComponent {
 
   getLineStatusClass(task: Task) {
 
-    if(task.status=='done') {
+    
+    if(task.status=='archive') {
+      return "archive-format"
+    } else if(task.status=='done') {
       return "done-format"
     } else if(task.status=='in-progress') {
       return "in-progress-format";
@@ -192,7 +199,15 @@ export class TodoListComponent {
   loadTasks() {
     this.tasks = [];
     this.todolistService.getTasks().subscribe(
-        (data: Task[]) => this.tasks = data);
+        (data: Task[]) => 
+          data.forEach(item =>{
+            if(item.status=='archive'){
+              this.archivedTasks.push(item);
+            } else {
+              this.tasks.push(item);
+            }
+          }) 
+        );
   }
 
   saveTask(task: Task) {
@@ -201,6 +216,18 @@ export class TodoListComponent {
   saveAllTasks() {
     this.todolistService.updateTasks(this.tasks).subscribe();   
   }
+
+
+  archiveTasks() {
+    this.tasks.forEach(item =>{
+      if(item.status=='done'){
+        item.status='archive';
+        this.saveTask(item);
+      }
+    });
+    this.loadTasks();
+  }
+
 
 }
 
