@@ -145,7 +145,7 @@ export class TodoListComponent {
       //reopen the task
       task.status =  'todo';
     } else if(task.status=='done') {
-      //reopen the task
+      //archive the task
       task.status =  'archive';
     } else if(task.status=='in-progress') {
       task.status =  'done';
@@ -199,15 +199,7 @@ export class TodoListComponent {
   loadTasks() {
     this.tasks = [];
     this.todolistService.getTasks().subscribe(
-        (data: Task[]) => 
-          data.forEach(item =>{
-            if(item.status=='archive'){
-              this.archivedTasks.push(item);
-            } else {
-              this.tasks.push(item);
-            }
-          }) 
-        );
+        (data: Task[]) => this.tasks = data);        
   }
 
   saveTask(task: Task) {
@@ -226,6 +218,13 @@ export class TodoListComponent {
       }
     });
     this.loadTasks();
+  }
+
+  isNonArchiveTask(item : Task) {
+    return item.status != 'archive';
+  }
+  isArchiveTask(item : Task) {
+    return item.status === 'archive';
   }
 
 

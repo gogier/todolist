@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 exports.BackendApi = void 0;
+var uuid_1 = require("uuid");
 var BackendApi = /** @class */ (function () {
     function BackendApi() {
     }
@@ -36,6 +37,33 @@ var BackendApi = /** @class */ (function () {
             //New task to add
             currentTasksLoaded.push(req.body);
         }
+        //Save in file
+        var data = JSON.stringify(currentTasksLoaded, null, 2);
+        fs.writeFileSync('server/data/saveTasks.json', data);
+        res.json(taskFound);
+    };
+    BackendApi.prototype.createTask = function (req, res) {
+        //update the current list
+        var fs = require('fs');
+        var rawdata = fs.readFileSync('server/data/saveTasks.json');
+        var currentTasksLoaded = JSON.parse(rawdata);
+        var taskFound = req.body;
+        var itemFound = false;
+        var newTaskToCreate = {
+            id: (0, uuid_1.v4)(),
+            title: taskFound.title,
+            actor: taskFound.actor,
+            description: taskFound.description,
+            category: taskFound.category,
+            estimate: taskFound.estimate,
+            status: 'todo',
+            order: -1,
+            creationDate: new Date(),
+            updateDate: new Date(0),
+            startDate: new Date(0),
+            endDate: new Date(0)
+        };
+        currentTasksLoaded.push(req.body);
         //Save in file
         var data = JSON.stringify(currentTasksLoaded, null, 2);
         fs.writeFileSync('server/data/saveTasks.json', data);

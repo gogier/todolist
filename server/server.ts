@@ -61,8 +61,10 @@ class Server {
 		const api: BackendApi = new BackendApi(); 
 	  
 		
-		// update task API 
+		// update tasks API 
 		router.put('/api/tasks', api.updateTasks.bind(api.updateTasks)); 
+		// create task API 
+		router.post('/api/tasks', api.createTask.bind(api.createTask)); 
 		// update task API 
 		router.put('/api/tasks/:id', api.updateTask.bind(api.updateTask)); 
 		// get all tasks API 

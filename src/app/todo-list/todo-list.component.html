@@ -52,7 +52,7 @@
 
     <!-- List Table -->
     <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
-      <tr *ngFor="let task of tasks" class="task-box" cdkDrag>
+      <tr *ngFor="let task of tasks | filterByCallback:isNonArchiveTask" class="task-box" cdkDrag>
           <td><a (click)="changeTaskStatus(task)"><mat-icon  >{{ getIconClassFromStatus(task.status) }}</mat-icon></a></td>
           <td class="task-category"><span [class]="getLineStatusClass(task)">{{ task.category }}</span></td>
           <td class="task-title"><button mat-button (click)="selectTask(task)" ><span [class]="getLineStatusClass(task)">{{ task.title }}</span></button> </td>
@@ -66,7 +66,7 @@
     <mat-divider></mat-divider>
     <mat-divider></mat-divider>
     <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">
-      <tr *ngFor="let task of archivedTasks" class="task-box" cdkDrag>
+      <tr *ngFor="let task of tasks | filterByCallback:isArchiveTask" class="task-box" cdkDrag>
           <td><a (click)="changeTaskStatus(task)"><mat-icon  >{{ getIconClassFromStatus(task.status) }}</mat-icon></a></td>
           <td class="task-category"><span [class]="getLineStatusClass(task)">{{ task.category }}</span></td>
           <td class="task-title"><button mat-button (click)="selectTask(task)" ><span [class]="getLineStatusClass(task)">{{ task.title }}</span></button> </td>

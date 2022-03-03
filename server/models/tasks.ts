@@ -12,3 +12,11 @@ export interface Task {
   startDate: Date; //when status to in progress
   endDate: Date; //when status to done
 }
+
+export interface NewTask {
+  title: string;
+  actor: string;
+  description: string;
+  category: string;
+  estimate: string;
+}

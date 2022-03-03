@@ -17,6 +17,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { GroupByPipe } from './group-by.pipe';
 import { OrderByPipe } from './order-by.pipe';
+import { FilterByCallbackPipe } from './filter-by-callback.pipe';
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
@@ -52,7 +53,8 @@ import { TodoCategoryViewComponent } from './todo-category-view/todo-category-vi
     TodoListComponent,
     TodoCategoryViewComponent,
     GroupByPipe,
-    OrderByPipe
+    OrderByPipe,
+    FilterByCallbackPipe
   ],
   bootstrap: [
     AppComponent
