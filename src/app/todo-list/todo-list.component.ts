@@ -137,6 +137,20 @@ export class TodoListComponent {
         }
     });
 
+    this.archivedTasks.forEach(item =>{
+      if(item.id == this.updateTaskForm.value.id){
+        item.title= this.updateTaskForm.value.title;
+        item.actor= this.updateTaskForm.value.actor;
+        item.description= this.updateTaskForm.value.description;
+        item.category= this.updateTaskForm.value.category;
+        item.status= this.updateTaskForm.value.status;
+        item.estimate= this.updateTaskForm.value.estimate; 
+        item.updateDate= new Date();
+
+        this.saveTask(item);
+      }
+  });
+
   }
 
 
@@ -198,15 +212,33 @@ export class TodoListComponent {
 
   loadTasks() {
     this.tasks = [];
+    this.archivedTasks = [];
     this.todolistService.getTasks().subscribe(
-        (data: Task[]) => this.tasks = data);        
+        (data: Task[]) => 
+          data.forEach(item =>{
+            if(item.status=='archive'){
+              this.archivedTasks.push(item);
+            } else {
+              this.tasks.push(item);
+            }
+          })
+
+          );   
+    this.tasks.sort((a, b) => a.order > b.order && 1 || -1);     
   }
 
   saveTask(task: Task) {
     this.todolistService.updateTask(task).subscribe();
   }
   saveAllTasks() {
-    this.todolistService.updateTasks(this.tasks).subscribe();   
+    var allTasks : Task[] = [];
+    this.tasks.forEach(item =>{
+      allTasks.push(item);
+    });
+    this.archivedTasks.forEach(item =>{
+      allTasks.push(item);
+    });
+    this.todolistService.updateTasks(allTasks).subscribe();   
   }
 
 
@@ -218,6 +250,7 @@ export class TodoListComponent {
       }
     });
     this.loadTasks();
+    
   }
 
   isNonArchiveTask(item : Task) {
