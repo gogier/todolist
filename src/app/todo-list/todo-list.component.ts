@@ -38,6 +38,8 @@ export class TodoListComponent {
   tasks:Task[] = [];
   archivedTasks:Task[] = [];
 
+  nbActiveTasks = 0;
+
   currentTaskToUpdate: Task = {} as Task;
 
   /* On init : SORT Task */
@@ -213,6 +215,7 @@ export class TodoListComponent {
   loadTasks() {
     this.tasks = [];
     this.archivedTasks = [];
+    this.nbActiveTasks = 0;
     this.todolistService.getTasks().subscribe(
         (data: Task[]) => 
           data.forEach(item =>{
@@ -220,10 +223,12 @@ export class TodoListComponent {
               this.archivedTasks.push(item);
             } else {
               this.tasks.push(item);
+              if(item.status=='todo'||item.status=='in-progress'){
+                this.nbActiveTasks++ ;
+              }
             }
           })
-
-          );   
+    );   
     this.tasks.sort((a, b) => a.order > b.order && 1 || -1);     
   }
 

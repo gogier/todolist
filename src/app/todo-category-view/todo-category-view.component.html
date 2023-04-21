@@ -1,7 +1,7 @@
 <ul *ngFor="let categoryTaskItem of tasks | groupBy: 'category' | orderBy: 'key'" >
     <span class="category-title">{{ categoryTaskItem.key }}</span>
     <div *ngFor="let task of categoryTaskItem.value">
-        <li  class="category-content" *ngIf="task.status!='done'">
+        <li  class="category-content" *ngIf="task.status!='done'&&task.status!='archive'">
             
                 <span class="category-status-task">[{{ task.status }}]</span>
                 <span class="category-title-task">{{ task.title }}</span>      

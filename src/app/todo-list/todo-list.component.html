@@ -47,7 +47,10 @@
         <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
       </mat-form-field> 
     </form>
-    <div class="todo-list-archive"><button mat-stroked-button (click)="archiveTasks()"><mat-icon>archive</mat-icon></button></div>
+    <div class="todo-list-archive">
+      <button mat-stroked-button (click)="archiveTasks()"><mat-icon>archive</mat-icon><mat-label>Archive</mat-label></button>
+      <button mat-stroked-button  class="todo-list-active-tasks"><mat-label>Active tasks = {{ nbActiveTasks }}</mat-label></button>
+    </div>
 
 
     <!-- List Table -->

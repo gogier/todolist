@@ -26,7 +26,13 @@ export class TodoCategoryViewComponent implements OnInit {
   loadTasks() {
     this.tasks = [];
     this.todolistService.getTasks().subscribe(
-        (data: Task[]) => this.tasks = data);
+        (data: Task[]) => this.tasks = data
+          //data.forEach(item => {
+          //  if(item.status!=='archive'){              
+          //    this.tasks.push(item);
+          //  } 
+          //})
+    );
   }
 
 

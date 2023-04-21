@@ -38,7 +38,7 @@ var Server = /** @class */ (function () {
         /**
          * Listen on provided port, on all network interfaces.
          */
-        server.listen(port, function () { return console.log("API running on localhost:" + port); });
+        server.listen(port, function () { return console.log("API running on localhost:".concat(port)); });
     };
     Server.prototype.routes = function () {
         // get router 
