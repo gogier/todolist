@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoListService } from '../todo-list/todo-list.service';
 
-import {  Task } from '../tasks';
+import {  Task } from '../model/tasks';
 
 @Component({
   selector: 'app-todo-category-view',

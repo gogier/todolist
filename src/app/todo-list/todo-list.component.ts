@@ -2,10 +2,14 @@ import { Component } from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 import { FormBuilder } from '@angular/forms';
-import { Task } from '../tasks';
+import { Task } from '../model/tasks';
 import { TodoListService } from './todo-list.service';
 
 import { configUser, configApp } from '../../config/config';
+import { TaskCreationRequest } from '../model/tasks';
+import { TaskUpdateRequest } from '../model/tasks';
+import { TaskOrderListRequest } from '../model/tasks';
+import { TaskStatus } from '../model/tasks';
 
 
 import { v4 as uuidv4 } from 'uuid';
@@ -45,78 +49,60 @@ export class TodoListComponent {
   /* On init : SORT Task */
   ngOnInit() {
     this.loadTasks();
-    this.tasks.sort((a, b) => a.order > b.order && 1 || -1);
   }  
 
   constructor(private formBuilder: FormBuilder, private todolistService: TodoListService) {}
 
 
 
-  /* ADD Task Action */
-  addToTodoList(): void {
-
-
-
-    /* Parse Task title to extract Category and actor */
-    /* Category => [<CategoryName>] */
-    /* Actor => @<ActorName> */
-    /* If no actor : Me as default actor */
-
-    const regexpTask = /(\[.*\])(.*)(\@\w*)/;
-    const catRegExp = /^\[.*\]/;
-    const actorRegExp = /\@\w*/;
+  // Method to add a new task at the beginning of the list
+  addNewTask() {
     
-    var filteredTitle = this.newTaskForm.value.title;
-    var newTaskCategory = '';
-    var newTaskActor = configUser.username;
+    if(this.newTaskForm.get('title')==null) return;
 
-    var categoryMatch = this.newTaskForm.value.title.match(catRegExp);
-    if(categoryMatch!=null) {
-      filteredTitle = filteredTitle.replace(categoryMatch[0], "");
-      newTaskCategory = categoryMatch[0].replace("[","").replace("]","");
-    }
-
-    var actorMatch = this.newTaskForm.value.title.match(actorRegExp);
-    if(actorMatch!=null) {
-      filteredTitle = filteredTitle.replace(actorMatch[0], "");
-      newTaskActor = actorMatch[0].replace("@","");
-    }
-
-    var newTaskToCreate = {
-      id: uuidv4(),
-      title: filteredTitle,
-      actor: newTaskActor,
-      description: '',
-      category: newTaskCategory,
-      estimate: '',
-      status:configApp.status.find(item => item.id='todo')?.id ?? 'todo',
-      order: -1,
-      creationDate: new Date(),
-      updateDate:  new Date(0),
-      startDate: new Date(0),
-      endDate: new Date(0),
+    const newTaskRequest: TaskCreationRequest = {
+      title: this.newTaskForm.get('title')!.value,
+      actor: configUser.username,
+      description: '', // Provide a default value or adjust as needed
+      project: 'default', // Provide a default value or adjust as needed
+      estimate: '' // Provide a default value or adjust as needed
     };
-    console.log(newTaskToCreate);
-    this.tasks.unshift(newTaskToCreate);
-    this.saveOrder();
-    this.newTaskForm.reset();
 
-
+    this.todolistService.createTask(newTaskRequest).subscribe(
+      (newTask) => {
+        this.tasks.unshift(newTask); // Add the new task at the beginning of the list
+        this.newTaskForm.reset(); // Reset the form after adding the task
+      },
+      (error) => {
+        // Handle error if needed
+        console.error('Error creating a new task:', error);
+      }
+    );
   }
+
 
 
   /* ORDER Drag & Drop Action */
   drop(event: CdkDragDrop<Task[]>) {
     moveItemInArray(this.tasks, event.previousIndex, event.currentIndex);
-    this.saveOrder();
-    this.selectTask(this.tasks[event.currentIndex]);
-  }
 
-  /* To be able to keep the order define by the user */
-  saveOrder() {
-    this.tasks.forEach((x,index) => { x.order=index;   });
+    // Update the order on the server side (optional)
+    const taskOrderList: TaskOrderListRequest = {
+      taskIds: this.tasks.map(task => task.id)
+    };
+
+    this.todolistService.updateTasksOrder(taskOrderList).subscribe(
+      () => {
+        console.log('Order updated on the server side.');
+      },
+      (error) => {
+        // Handle error if needed
+        console.error('Error updating order on the server side:', error);
+      }
+    );
     
-    this.saveAllTasks();
+
+    this.selectTask(this.tasks[event.currentIndex]);
   }
 
   selectTask(task: Task) {
@@ -156,30 +142,22 @@ export class TodoListComponent {
   }
 
 
-  changeTaskStatus(task: Task) {
-    if(task.status=='archive') {
-      //reopen the task
-      task.status =  'todo';
-    } else if(task.status=='done') {
-      //archive the task
-      task.status =  'archive';
-    } else if(task.status=='in-progress') {
-      task.status =  'done';
-      task.endDate = new Date();
-    } else {
-      //else todo
-      task.status =  'in-progress';
-      task.startDate = new Date();
-    }
-    task.updateDate= new Date();
-
-    this.saveTask(task);
+  changeTaskStatus(task: Task) { 
+    this.todolistService.updateTaskStatus(task.id).subscribe(
+      () => {
+        console.log('Status updated on the server side.');
+      },
+      (error) => {
+        // Handle error if needed
+        console.error('Error updating status on the server side:', error);
+      }
+    );
   }
 
   getIconClassFromStatus(status: string) {
-    if(status=='done') {
+    if(status==TaskStatus.Done) {
       return 'task_alt';
-    } else if(status=='in-progress') {
+    } else if(status==TaskStatus.InProgress) {
       return 'autorenew';
     }
     //else todo
@@ -198,11 +176,11 @@ export class TodoListComponent {
   getLineStatusClass(task: Task) {
 
     
-    if(task.status=='archive') {
+    if(task.status==TaskStatus.Archived) {
       return "archive-format"
-    } else if(task.status=='done') {
+    } else if(task.status==TaskStatus.Done) {
       return "done-format"
-    } else if(task.status=='in-progress') {
+    } else if(task.status==TaskStatus.InProgress) {
       return "in-progress-format";
     } else {
       return "";
@@ -216,53 +194,45 @@ export class TodoListComponent {
     this.tasks = [];
     this.archivedTasks = [];
     this.nbActiveTasks = 0;
-    this.todolistService.getTasks().subscribe(
+    this.todolistService.getNotArchivedTasks('default').subscribe(
         (data: Task[]) => 
           data.forEach(item =>{
             if(item.status=='archive'){
               this.archivedTasks.push(item);
             } else {
               this.tasks.push(item);
-              if(item.status=='todo'||item.status=='in-progress'){
+              if(item.status==TaskStatus.ToDo||item.status==TaskStatus.InProgress){
                 this.nbActiveTasks++ ;
               }
             }
           })
-    );   
-    this.tasks.sort((a, b) => a.order > b.order && 1 || -1);     
+    );        
   }
 
   saveTask(task: Task) {
-    this.todolistService.updateTask(task).subscribe();
+    this.todolistService.updateTask(task.id, task).subscribe();
   }
-  saveAllTasks() {
-    var allTasks : Task[] = [];
-    this.tasks.forEach(item =>{
-      allTasks.push(item);
-    });
-    this.archivedTasks.forEach(item =>{
-      allTasks.push(item);
-    });
-    this.todolistService.updateTasks(allTasks).subscribe();   
-  }
-
+  
 
   archiveTasks() {
-    this.tasks.forEach(item =>{
-      if(item.status=='done'){
-        item.status='archive';
-        this.saveTask(item);
+    this.todolistService.archiveTasks().subscribe(
+      () => {
+        console.log('Status updated on the server side.');
+      },
+      (error) => {
+        // Handle error if needed
+        console.error('Error updating status on the server side:', error);
       }
-    });
+    );
     this.loadTasks();
     
   }
 
   isNonArchiveTask(item : Task) {
-    return item.status != 'archive';
+    return item.status != TaskStatus.Archived;
   }
   isArchiveTask(item : Task) {
-    return item.status === 'archive';
+    return item.status === TaskStatus.Archived;
   }
 
 

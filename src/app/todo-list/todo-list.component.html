@@ -44,7 +44,7 @@
     <form [formGroup]="newTaskForm">
       <mat-form-field class="formfield-full-width" appearance="fill">
         <mat-label>Add your task here</mat-label>
-        <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addToTodoList()"/>
+        <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addNewTask()"/>
       </mat-form-field> 
     </form>
     <div class="todo-list-archive">
