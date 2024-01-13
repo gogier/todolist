@@ -1,0 +1,170 @@
+{
+	"info": {
+		"_postman_id": "3ec9d513-f989-42cb-a5be-e0a74d6f00ec",
+		"name": "Todolist - Validation Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Value is\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.eql([\r",
+							"        {\r",
+							"        \"id\": \"d30ca3fe-68fa-4f5c-ba60-a1def6149d02\",\r",
+							"        \"title\": \" Préparer les congés et les Certifications\",\r",
+							"        \"actor\": \"Guillaume\",\r",
+							"        \"description\": \"\",\r",
+							"        \"category\": \"TWIST\",\r",
+							"        \"estimate\": \"\",\r",
+							"        \"status\": \"in-progress\",\r",
+							"        \"order\": 0,\r",
+							"        \"creationDate\": \"2023-04-21T07:06:17.322Z\",\r",
+							"        \"updateDate\": \"2023-04-21T09:12:43.516Z\",\r",
+							"        \"startDate\": \"2023-04-21T09:12:43.516Z\",\r",
+							"        \"endDate\": \"1970-01-01T00:00:00.000Z\"\r",
+							"    },\r",
+							"    {\r",
+							"        \"id\": \"848cbe7d-c85b-4bc7-8364-d0c19a9406af\",\r",
+							"        \"title\": \" Update Salesforce Conf mapping table\",\r",
+							"        \"actor\": \"Guillaume\",\r",
+							"        \"description\": \"\",\r",
+							"        \"category\": \"TWIST\",\r",
+							"        \"estimate\": \"\",\r",
+							"        \"status\": \"done\",\r",
+							"        \"order\": 1,\r",
+							"        \"creationDate\": \"2023-04-21T07:05:41.840Z\",\r",
+							"        \"updateDate\": \"2023-04-21T08:54:45.157Z\",\r",
+							"        \"startDate\": \"2023-04-21T08:54:45.029Z\",\r",
+							"        \"endDate\": \"2023-04-21T08:54:45.157Z\"\r",
+							"    }\r",
+							"    ]);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/tasks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"CORS is present\", function () {\r",
+							"    pm.response.to.have.header(\"Access-Control-Allow-Origin\");\r",
+							"});\r",
+							"pm.test(\"Value is\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.title).to.eql(\"new Task\");\r",
+							"    pm.expect(jsonData.id).not.eql(null);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"new Task\",\r\n    \"actor\": \"Guillaume\",\r\n    \"description\": \"\",\r\n    \"category\": \"Category\",\r\n    \"estimate\": \"\",\r\n    \"status\": \"todo\",\r\n    \"order\": 1,\r\n    \"startDate\": \"1970-01-01T00:00:00.000Z\",\r\n    \"endDate\": \"1970-01-01T00:00:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/tasks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"CORS is present\", function () {\r",
+							"    pm.response.to.have.header(\"Access-Control-Allow-Origin\");\r",
+							"});\r",
+							"pm.test(\"Value is\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.title).to.eql(\" new Task 2\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \" new Task 2\",\r\n    \"actor\": \"Guillaume\",\r\n    \"description\": \"\",\r\n    \"category\": \"Category\",\r\n    \"estimate\": \"\",\r\n    \"status\": \"todo\",\r\n    \"order\": 1,\r\n    \"startDate\": \"1970-01-01T00:00:00.000Z\",\r\n    \"endDate\": \"1970-01-01T00:00:00.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/tasks/848cbe7d-c85b-4bc7-8364-d0c19a9406af",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tasks",
+						"848cbe7d-c85b-4bc7-8364-d0c19a9406af"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,42 @@
+
+entity Task {
+    title String required
+    actor String
+    description String
+    estimate String
+    status TaskStatus required
+    order Integer
+    creationDate ZonedDateTime required //at creation
+    updateDate ZonedDateTime //when updated
+    startDate ZonedDateTime //when status to in progress
+    endDate ZonedDateTime //when status to done String
+}
+
+
+enum TaskStatus {
+	TODO (todo), INPROGRESS ("in-progress"), DONE (done), ARCHIVE (archive)
+}
+
+
+entity Category {
+	categoryName String required
+}
+
+entity Project {
+	projectTitle String required
+}
+
+
+relationship OneToOne {
+	Task{category} to Category
+}
+
+
+relationship OneToMany {
+	Project to Task{project}
+}
+
+
+// Set pagination options
+paginate Task with infinite-scroll
+
