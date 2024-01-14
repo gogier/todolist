@@ -6,7 +6,7 @@ export interface Task {
   category: string;
   estimate: string;
   status: string;
-  order: number;
+  orderInList: number;
   creationDate: Date; //at creation
   updateDate: Date; //when updated
   startDate: Date; //when status to in progress
@@ -35,7 +35,7 @@ export interface TaskUpdateRequest {
 
 export enum TaskStatus {
   ToDo = 'ToDo',
-  InProgress = 'InProgress',
+  InProgress = 'In Progress',
   Done = 'Done',
   ToArchive = 'toArchive',
   Archived = 'Archived'

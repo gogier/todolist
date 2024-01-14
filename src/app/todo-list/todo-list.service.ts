@@ -50,7 +50,7 @@ export class TodoListService {
     return this.http.put<Task>(`${this.apiUrl}/tasks/${taskId}/status`, {},{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
 
-  updateTasksOrder(taskOrderList: TaskOrderListRequest): Observable<void> {
+  updateTasksOrder(taskOrderList: String[]): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/tasks/ordering`, taskOrderList,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
 

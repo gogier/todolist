@@ -32,7 +32,7 @@ export class TodoListComponent {
     category: '',
     estimate: '',
     status:'',
-    order: '',
+    orderInList: 0,
     creationDate: null,
     updateDate: null,
     startDate: null,
@@ -87,9 +87,7 @@ export class TodoListComponent {
     moveItemInArray(this.tasks, event.previousIndex, event.currentIndex);
 
     // Update the order on the server side (optional)
-    const taskOrderList: TaskOrderListRequest = {
-      taskIds: this.tasks.map(task => task.id)
-    };
+    const taskOrderList:String[] = this.tasks.map(task => task.id);
 
     this.todolistService.updateTasksOrder(taskOrderList).subscribe(
       () => {
@@ -144,8 +142,16 @@ export class TodoListComponent {
 
   changeTaskStatus(task: Task) { 
     this.todolistService.updateTaskStatus(task.id).subscribe(
-      () => {
-        console.log('Status updated on the server side.');
+      (updatedTask) => {
+        // Find the index of the task in the tasks array
+        const taskIndex = this.tasks.findIndex(t => t.id === updatedTask.id);
+
+        if (taskIndex !== -1) {
+          // Update the task in the tasks array with the updated task
+          this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...updatedTask };
+        }
+
+        console.log(`Task ${task.id} status changed to ${updatedTask.status}`);
       },
       (error) => {
         // Handle error if needed

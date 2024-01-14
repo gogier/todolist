@@ -6,7 +6,6 @@ public class TaskCreationRequest {
     private String title;
     private String actor;
     private String description;
-    private String project;
     private String estimate;
 
     // Constructors, getters, and setters

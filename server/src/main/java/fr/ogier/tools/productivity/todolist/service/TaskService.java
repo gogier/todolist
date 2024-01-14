@@ -2,6 +2,7 @@ package fr.ogier.tools.productivity.todolist.service;
 
 // TaskService.java
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 import fr.ogier.tools.productivity.todolist.repository.TaskRepository;
 import fr.ogier.tools.productivity.todolist.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ public class TaskService {
     public static final String STATUS_TODO = "ToDo";
     public static final String STATUS_INPROGRESS = "In Progress";
     public static final String STATUS_DONE = "Done";
-    public static final String STATUS_TO_ARCHIVE = "toArchive";
     public static final String STATUS_ARCHIVED = "Archived";
     
 
@@ -31,26 +31,26 @@ public class TaskService {
     }
     
     // Implement your task retrieval logic here
-    public List<Task> getTasks(Boolean archive, String project) {
-        if (archive == null && project == null) {
+    public List<Task> getTasks(Boolean archive, String projectId) {
+        if (archive == null && projectId == null) {
             // No filtering, return all tasks
-            return taskRepository.findAll();
-        } else if (archive != null && project == null) {
+            return taskRepository.findAll(Sort.by("orderInList"));
+        } else if (archive != null && projectId == null) {
             // Filtering based on archive status
             if (archive) {
-                return taskRepository.findByStatus(STATUS_ARCHIVED);
+                return taskRepository.findByStatus(STATUS_ARCHIVED, Sort.by("orderInList"));
             } else {
-                return taskRepository.findByStatusNot(STATUS_ARCHIVED);
+                return taskRepository.findByStatusNot(STATUS_ARCHIVED, Sort.by("orderInList"));
             }
-        } else if (archive == null && project != null) {
+        } else if (archive == null && projectId != null) {
             // Filtering based on project
-            return taskRepository.findByProjectIgnoreCase(project);
+            return taskRepository.findByProjectId(projectId, Sort.by("orderInList"));
         } else {
             // Filtering based on both archive status and project
             if (archive) {
-                return taskRepository.findByStatusAndProjectIgnoreCase(STATUS_ARCHIVED, project);
+                return taskRepository.findByStatusAndProjectId(STATUS_ARCHIVED, projectId, Sort.by("orderInList"));
             } else {
-                return taskRepository.findByStatusNotAndProjectIgnoreCase(STATUS_ARCHIVED, project);
+                return taskRepository.findByStatusNotAndProjectId(STATUS_ARCHIVED, projectId, Sort.by("orderInList"));
             }
         }
     }
@@ -58,19 +58,22 @@ public class TaskService {
     public Task getTaskById(String taskId) {
         return taskRepository.findById(taskId).orElse(null);
     }
+    public Task getTaskByIdAndProjectId(String projectId, String taskId) {
+        return taskRepository.findByIdAndProjectId(taskId, projectId).orElse(null);
+    }
     
-    public Task createTask(TaskCreationRequest taskToCreate) {
+    public Task createTask(String projectId, TaskCreationRequest taskToCreate) {
         // Extract category from the title and set it in the task
         Task task = new Task();
         String title = taskToCreate.getTitle();
         String category = extractCategoryFromTitle(title);
         if(category!=null) {
             title = title.replace("[" + category + "]", "").trim();
-            task.setTitle(title);
         }
+        task.setTitle(title);
         task.setCategory(category);
         task.setActor(taskToCreate.getActor());
-        task.setProject(taskToCreate.getProject());
+        task.setProjectId(projectId);
         task.setDescription(taskToCreate.getDescription());
         task.setEstimate(taskToCreate.getEstimate());
 
@@ -94,8 +97,8 @@ public class TaskService {
     }
 
 
-    public Task updateTask(String taskId, TaskUpdateRequest taskUpdateRequest) {
-        Task existingTask = taskRepository.findById(taskId).orElse(null);
+    public Task updateTask(String projectId, String taskId, TaskUpdateRequest taskUpdateRequest) {
+        Task existingTask = taskRepository.findByIdAndProjectId(taskId, projectId).orElse(null);
 
          if (existingTask != null) {
             // Check if task properties need to be updated
@@ -144,8 +147,8 @@ public class TaskService {
     }
 
 
-    public Task updateTaskStatus(String taskId) {
-        Task task = taskRepository.findById(taskId).orElse(null);
+    public Task updateTaskStatus(String projectId, String taskId) {
+        Task task = taskRepository.findByIdAndProjectId(taskId, projectId).orElse(null);
 
         if (task != null) {
             // Implement logic to update task status
@@ -183,8 +186,6 @@ public class TaskService {
             case STATUS_INPROGRESS: 
                 return STATUS_DONE;
             case STATUS_DONE: 
-                return STATUS_TO_ARCHIVE;
-            case STATUS_TO_ARCHIVE: 
                 return STATUS_TODO;
             default: return null;
         }
@@ -207,10 +208,10 @@ public class TaskService {
     }
 
 
-    public boolean updateTasksOrder(List<String> taskOrderList) {
+    public boolean updateTasksOrder(String projectId, List<String> taskOrderList) {
         boolean orderListDone = false;
         // Implement logic to update the order of non-archived tasks based on the provided order list
-         Map<String, Task> tasksToUpdateOrder = taskRepository.findByStatusNotMap(STATUS_ARCHIVED);
+         Map<String, Task> tasksToUpdateOrder = taskRepository.findByStatusNotAndProjectIdMap(STATUS_ARCHIVED, projectId, Sort.by("orderInList"));
 
          if (tasksToUpdateOrder.size() == taskOrderList.size()) {
              // Update the order field for each task based on the order in the list
@@ -228,9 +229,9 @@ public class TaskService {
          return orderListDone;
     }
 
-    public void archiveTasks() {
+    public void archiveTasks(String projectId) {
         // Implement logic to archive tasks with status 'toArchive' and set status to 'archived'
-        List<Task> tasksToArchive = taskRepository.findByStatus(STATUS_TO_ARCHIVE);
+        List<Task> tasksToArchive = taskRepository.findByStatusAndProjectId(STATUS_DONE, projectId, null);
 
         for (Task task : tasksToArchive) {
             task.setStatus(STATUS_ARCHIVED);

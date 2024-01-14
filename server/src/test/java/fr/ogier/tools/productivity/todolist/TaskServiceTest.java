@@ -72,11 +72,10 @@ public class TaskServiceTest {
         task.setTitle("[Category] Sample Task");
         task.setActor("User1");
         task.setDescription("Sample description");
-        task.setProject("SampleProject");
         task.setEstimate("1h");
 
         // Call the service method to create the task
-        Task createdTask = taskService.createTask(task);
+        Task createdTask = taskService.createTask("SampleProject", task);
 
         // Retrieve the task from the repository
         Task retrievedTask = taskRepository.findById(createdTask.getId()).orElse(null);
@@ -100,9 +99,8 @@ public class TaskServiceTest {
         task.setTitle("Sample Task");
         task.setActor("User1");
         task.setDescription("Sample description");
-        task.setProject("SampleProject");
         task.setEstimate("1h");
-        Task savedTask = taskService.createTask(task);
+        Task savedTask = taskService.createTask("SampleProject", task);
 
         // Call the service method to get the task by ID
         String taskId = savedTask.getId();
@@ -139,7 +137,7 @@ public class TaskServiceTest {
         existingTask.setDescription("Old Description");
         existingTask.setEstimate("Old Estimate");
         
-        Task createdTask = taskService.createTask(existingTask);
+        Task createdTask = taskService.createTask("SampleProject", existingTask);
 
         System.out.println(" CreatedDate=" + createdTask.getUpdateDate().getNano());
 
@@ -152,7 +150,7 @@ public class TaskServiceTest {
         taskUpdateRequest.setEstimate("New Estimate");
 
         // Call the service method to update the task
-        Task updatedTask = taskService.updateTask(createdTask.getId(), taskUpdateRequest);
+        Task updatedTask = taskService.updateTask("SampleProject", createdTask.getId(), taskUpdateRequest);
 
         System.out.println(" updatedTask=" + updatedTask.getUpdateDate().getNano());
 
@@ -178,7 +176,7 @@ public class TaskServiceTest {
         existingTask.setDescription("Old Description");
         existingTask.setEstimate("Old Estimate");
         
-        Task createdTask = taskService.createTask(existingTask);
+        Task createdTask = taskService.createTask("SampleProject", existingTask);
 
         System.out.println(" - NoUpdate - CreatedDate=" + createdTask.getUpdateDate().getNano());
         // Create a task update request with the same values as existing task
@@ -190,7 +188,7 @@ public class TaskServiceTest {
         taskUpdateRequest.setEstimate("Old Estimate");
 
         // Call the service method to update the task
-        Task updatedTask = taskService.updateTask(createdTask.getId(), taskUpdateRequest);
+        Task updatedTask = taskService.updateTask("SampleProject", createdTask.getId(), taskUpdateRequest);
 
         System.out.println(" - NoUpdate - updatedTask=" + updatedTask.getUpdateDate().getNano());
         // Verify that the task is not updated
@@ -208,7 +206,7 @@ public class TaskServiceTest {
     public void testUpdateTask_TaskNotFound() {
 
         // Call the service method to update the task
-        Task updatedTask = taskService.updateTask("1", new TaskUpdateRequest());
+        Task updatedTask = taskService.updateTask("SampleProject", "1", new TaskUpdateRequest());
 
         // Verify that the task is not found
         assertNull(updatedTask);
@@ -223,14 +221,14 @@ public class TaskServiceTest {
         existingTask.setDescription("Old Description");
         existingTask.setEstimate("Old Estimate");
         
-        Task createdTask = taskService.createTask(existingTask);
+        Task createdTask = taskService.createTask("SampleProject", existingTask);
 
         
         System.out.println(" - UpdateTaskStatus - createdTask=" + createdTask.getId());
 
 
         // Update the status to 'In Progress'
-        Task updatedTask = taskService.updateTaskStatus(createdTask.getId());
+        Task updatedTask = taskService.updateTaskStatus("SampleProject", createdTask.getId());
         
         System.out.println(" - UpdateTaskStatus - updatedTask=" + updatedTask.getId());
 
@@ -248,7 +246,7 @@ public class TaskServiceTest {
     @Test
     public void testUpdateTaskStatus_TaskNotFound() {
         // Attempt to update the status of a non-existent task
-        Task updatedTask = taskService.updateTaskStatus("nonExistentId");
+        Task updatedTask = taskService.updateTaskStatus("SampleProject", "nonExistentId");
 
         // Assert that the updated task is null
         assertNull(updatedTask);

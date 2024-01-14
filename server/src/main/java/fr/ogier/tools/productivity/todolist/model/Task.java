@@ -20,7 +20,7 @@ public class Task {
     private String actor;
     private String description;
     private String category;
-    private String project;
+    private String projectId;
     private String estimate;
     private String status;
     private Integer orderInList;
@@ -43,13 +43,13 @@ public class Task {
    
     public Task() {};
 
-    public Task(String id, String title, String actor, String description, String category, String project, String estimate, String status, Integer order, LocalDateTime creationDate, LocalDateTime updateDate, LocalDateTime startDate, LocalDateTime endDate) {
+    public Task(String id, String title, String actor, String description, String category, String projectId, String estimate, String status, Integer order, LocalDateTime creationDate, LocalDateTime updateDate, LocalDateTime startDate, LocalDateTime endDate) {
         this.id = id;
         this.title = title;
         this.actor = actor;
         this.description = description;
         this.category = category;
-        this.project = project;
+        this.projectId = projectId;
         this.estimate = estimate;
         this.status = status;
         this.orderInList = order;
