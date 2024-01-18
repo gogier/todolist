@@ -2,17 +2,18 @@
 <mat-toolbar color="primary" class="top-bar">
   <a [routerLink]="['/']" class="main-title">My TODO List</a>
   <span class="todolist-top-bar-spacer"></span>
-  <mat-form-field>
-    <mat-label>Project</mat-label>
-    <mat-select [(value)]="selectedProject">
-      <mat-option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <div class="project-select-view-topbar">
+    <mat-form-field>
+      <mat-label>Project</mat-label>
+      <mat-select [(value)]="selectedProjectId" (selectionChange)="selectProject($event.value)">
+        <mat-option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <button mat-icon-button (click)="createProject()" aria-label="Add new project">
-    <mat-icon>add_circle</mat-icon>
-  </button>
-  
+    <button mat-icon-button (click)="createProject()" aria-label="Add new project">
+      <mat-icon>add_circle</mat-icon>
+    </button>
+  </div>
   
   <a routerLink="/" routerLinkActive="active"><button mat-raised-button class="button-view-topbar" aria-label="List View of Tasks">
     List View

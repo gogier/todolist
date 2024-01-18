@@ -34,9 +34,11 @@ public class TaskService {
     public List<Task> getTasks(Boolean archive, String projectId) {
         if (archive == null && projectId == null) {
             // No filtering, return all tasks
+                System.out.println(" No filtering, return all tasks");
             return taskRepository.findAll(Sort.by("orderInList"));
         } else if (archive != null && projectId == null) {
             // Filtering based on archive status
+            System.out.println(" Filtering based on archive status " + archive);
             if (archive) {
                 return taskRepository.findByStatus(STATUS_ARCHIVED, Sort.by("orderInList"));
             } else {
@@ -44,9 +46,11 @@ public class TaskService {
             }
         } else if (archive == null && projectId != null) {
             // Filtering based on project
+                System.out.println(" Filtering based on project");
             return taskRepository.findByProjectId(projectId, Sort.by("orderInList"));
         } else {
             // Filtering based on both archive status and project
+                System.out.println(" Filtering based on both archive status and project : " + archive);
             if (archive) {
                 return taskRepository.findByStatusAndProjectId(STATUS_ARCHIVED, projectId, Sort.by("orderInList"));
             } else {
@@ -186,6 +190,8 @@ public class TaskService {
             case STATUS_INPROGRESS: 
                 return STATUS_DONE;
             case STATUS_DONE: 
+                return STATUS_TODO;
+            case STATUS_ARCHIVED:
                 return STATUS_TODO;
             default: return null;
         }

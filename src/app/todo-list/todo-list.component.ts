@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component , OnInit } from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 import { FormBuilder } from '@angular/forms';
 import { Task } from '../model/tasks';
 import { TodoListService } from './todo-list.service';
+import { ProjectService } from '../shared/project.service';
 
 import { configUser, configApp } from '../../config/config';
 import { TaskCreationRequest } from '../model/tasks';
@@ -19,7 +20,7 @@ import { v4 as uuidv4 } from 'uuid';
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
 })
-export class TodoListComponent {
+export class TodoListComponent implements OnInit {
   newTaskForm = this.formBuilder.group({
     title: '',
   });
@@ -46,12 +47,27 @@ export class TodoListComponent {
 
   currentTaskToUpdate: Task = {} as Task;
 
+  selectedProjectId: string = "all";
+
   /* On init : SORT Task */
   ngOnInit() {
-    this.loadTasks();
+
+    this.projectService.selectedProjectId$.subscribe((projectId) => {
+      if(projectId==null) {
+        this.selectedProjectId = "all";
+      } else {
+        this.selectedProjectId = projectId;
+      }
+
+      
+      this.loadTasks();
+      // Fetch tasks based on the selected project ID
+      // You can call your API service method here.
+    });
+
   }  
 
-  constructor(private formBuilder: FormBuilder, private todolistService: TodoListService) {}
+  constructor(private formBuilder: FormBuilder, private todolistService: TodoListService, private projectService: ProjectService) {}
 
 
 
@@ -64,11 +80,11 @@ export class TodoListComponent {
       title: this.newTaskForm.get('title')!.value,
       actor: configUser.username,
       description: '', // Provide a default value or adjust as needed
-      project: 'default', // Provide a default value or adjust as needed
+      project: '', // Provide a default value or adjust as needed
       estimate: '' // Provide a default value or adjust as needed
     };
 
-    this.todolistService.createTask(newTaskRequest).subscribe(
+    this.todolistService.createTask(this.selectedProjectId, newTaskRequest).subscribe(
       (newTask) => {
         this.tasks.unshift(newTask); // Add the new task at the beginning of the list
         this.newTaskForm.reset(); // Reset the form after adding the task
@@ -86,10 +102,17 @@ export class TodoListComponent {
   drop(event: CdkDragDrop<Task[]>) {
     moveItemInArray(this.tasks, event.previousIndex, event.currentIndex);
 
+    this.updateTasksOrder();
+    
+
+    this.selectTask(this.tasks[event.currentIndex]);
+  }
+
+  updateTasksOrder() {
     // Update the order on the server side (optional)
     const taskOrderList:String[] = this.tasks.map(task => task.id);
 
-    this.todolistService.updateTasksOrder(taskOrderList).subscribe(
+    this.todolistService.updateTasksOrder(this.selectedProjectId, taskOrderList).subscribe(
       () => {
         console.log('Order updated on the server side.');
       },
@@ -99,8 +122,6 @@ export class TodoListComponent {
       }
     );
     
-
-    this.selectTask(this.tasks[event.currentIndex]);
   }
 
   selectTask(task: Task) {
@@ -141,15 +162,42 @@ export class TodoListComponent {
 
 
   changeTaskStatus(task: Task) { 
-    this.todolistService.updateTaskStatus(task.id).subscribe(
+    const archiveTaskStatusUpdate = (task.status == TaskStatus.Archived);
+    this.todolistService.updateTaskStatus(this.selectedProjectId, task.id).subscribe(
       (updatedTask) => {
-        // Find the index of the task in the tasks array
-        const taskIndex = this.tasks.findIndex(t => t.id === updatedTask.id);
+        if(archiveTaskStatusUpdate) {
 
-        if (taskIndex !== -1) {
-          // Update the task in the tasks array with the updated task
-          this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...updatedTask };
+          // Find the index of the task in the tasks array
+          const taskIndex = this.archivedTasks.findIndex(t => t.id === updatedTask.id);
+
+          if (taskIndex !== -1) {
+            // Update the task in the tasks array with the updated task
+            this.archivedTasks[taskIndex] = { ...this.archivedTasks[taskIndex], ...updatedTask };
+            this.tasks.push(this.archivedTasks[taskIndex]);
+            this.archivedTasks.splice(taskIndex, 1);
+
+            this.updateTasksOrder();
+            this.nbActiveTasks++;
+          }
+
+
+        } else {
+
+          // Find the index of the task in the tasks array
+          const taskIndex = this.tasks.findIndex(t => t.id === updatedTask.id);
+
+          if (taskIndex !== -1) {
+            // Update the task in the tasks array with the updated task
+            this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...updatedTask };
+            
+            if(updatedTask.status==TaskStatus.Done) {
+              this.nbActiveTasks--;
+            }
+          }
+
         }
+
+
 
         console.log(`Task ${task.id} status changed to ${updatedTask.status}`);
       },
@@ -199,38 +247,46 @@ export class TodoListComponent {
   loadTasks() {
     this.tasks = [];
     this.archivedTasks = [];
-    this.nbActiveTasks = 0;
-    this.todolistService.getNotArchivedTasks('default').subscribe(
-        (data: Task[]) => 
+    var countActiveTasks = 0;
+    
+    this.todolistService.getNotArchivedTasks(this.selectedProjectId).subscribe(
+        (data: Task[]) => {
           data.forEach(item =>{
-            if(item.status=='archive'){
-              this.archivedTasks.push(item);
-            } else {
               this.tasks.push(item);
               if(item.status==TaskStatus.ToDo||item.status==TaskStatus.InProgress){
-                this.nbActiveTasks++ ;
+                countActiveTasks++ ;
               }
-            }
-          })
-    );        
+              
+              
+          });
+          this.nbActiveTasks = countActiveTasks;
+        }
+    );      
+    this.todolistService.getArchivedTasks(this.selectedProjectId).subscribe(
+      (data: Task[]) => 
+        data.forEach(item =>{
+            this.archivedTasks.push(item);
+        })
+  );        
   }
 
   saveTask(task: Task) {
-    this.todolistService.updateTask(task.id, task).subscribe();
+    this.todolistService.updateTask(this.selectedProjectId, task.id, task).subscribe();
   }
   
 
   archiveTasks() {
-    this.todolistService.archiveTasks().subscribe(
+    this.todolistService.archiveTasks(this.selectedProjectId).subscribe(
       () => {
         console.log('Status updated on the server side.');
+        
+        this.loadTasks();
       },
       (error) => {
         // Handle error if needed
         console.error('Error updating status on the server side:', error);
       }
     );
-    this.loadTasks();
     
   }
 

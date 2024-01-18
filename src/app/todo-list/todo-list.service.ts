@@ -19,42 +19,42 @@ export class TodoListService {
   constructor(private http: HttpClient) { }
 
 
-  getTasks(archive?: boolean, project?: string): Observable<Task[]> {
+  getTasks(projectId: string, archive?: boolean): Observable<Task[]> {
     const params = new HttpParams()
-      .set('archive', archive ? archive.toString() : '')
-      .set('project', project || '');
+      .set('archive', archive!=null ? archive.toString() : '')
+      .set('projectId', projectId || '');
 
-    return this.http.get<Task[]>(`${this.apiUrl}/tasks`, { params, "headers" : { "access-Control-Allow-Origin" : "*"} });
+    return this.http.get<Task[]>(`${this.apiUrl}/projects/${projectId}/tasks`, { params, "headers" : { "access-Control-Allow-Origin" : "*"} });
   }
 
-  getArchivedTasks(project?: string): Observable<Task[]> {
-    return this.getTasks(true, project);
+  getArchivedTasks(projectId: string): Observable<Task[]> {
+    return this.getTasks(projectId, true);
   }
-  getNotArchivedTasks(project?: string): Observable<Task[]> {
-    return this.getTasks(false, project);
-  }
-
-  createTask(task: TaskCreationRequest): Observable<Task> {
-    return this.http.post<Task>(`${this.apiUrl}/tasks`, task,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  getNotArchivedTasks(projectId: string): Observable<Task[]> {
+    return this.getTasks(projectId, false);
   }
 
-  getTaskById(taskId: string): Observable<Task> {
-    return this.http.get<Task>(`${this.apiUrl}/tasks/${taskId}`,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  createTask(projectId: string, task: TaskCreationRequest): Observable<Task> {
+    return this.http.post<Task>(`${this.apiUrl}/projects/${projectId}/tasks`, task,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
 
-  updateTask(taskId: string, updatedTask: TaskUpdateRequest): Observable<Task> {
-    return this.http.put<Task>(`${this.apiUrl}/tasks/${taskId}`, updatedTask,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  getTaskById(projectId: string, taskId: string): Observable<Task> {
+    return this.http.get<Task>(`${this.apiUrl}/projects/${projectId}/tasks/${taskId}`,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
 
-  updateTaskStatus(taskId: string): Observable<Task> {
-    return this.http.put<Task>(`${this.apiUrl}/tasks/${taskId}/status`, {},{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  updateTask(projectId: string, taskId: string, updatedTask: TaskUpdateRequest): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/projects/${projectId}/tasks/${taskId}`, updatedTask,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
 
-  updateTasksOrder(taskOrderList: String[]): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/tasks/ordering`, taskOrderList,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  updateTaskStatus(projectId: string, taskId: string): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/projects/${projectId}/tasks/${taskId}/status`, {},{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
 
-  archiveTasks(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/tasks/archive`, {},{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  updateTasksOrder(projectId: string, taskOrderList: String[]): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/projects/${projectId}/tasks/ordering`, taskOrderList,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  }
+
+  archiveTasks(projectId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/projects/${projectId}/tasks/archive`, {},{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
 }

@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { Project, ProjectCreationRequest } from '../model/projects';
-import { ProjectService } from './top-bar.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TopBarDialogComponent } from './top-bar-dialog/top-bar-dialog.component';
+import { ProjectService } from '../shared/project.service';
 
 
 @Component({
@@ -12,15 +14,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./top-bar.component.css']
 })
 export class TopBarComponent {
-  selectedProject: string;
+  selectedProjectId: string;
   projects: Project[] = [];
-  projectForm: FormGroup;
 
-  constructor(private projectService: ProjectService, private fb: FormBuilder) {
-    this.projectForm = this.fb.group({
-      projectName: ['', Validators.required],
-    });
-    this.selectedProject = '';
+  constructor(private projectService: ProjectService,public dialog: MatDialog) {
+    this.selectedProjectId = '';
   }
 
   ngOnInit(): void {
@@ -30,17 +28,40 @@ export class TopBarComponent {
   loadProjects() {
     this.projectService.getProjects().subscribe((projects) => {
       this.projects = projects;
+
+      if(this.projects.length>0) {
+        this.selectProject(this.projects[0].id);
+      }
     });
   }
 
   createProject() {
-    const projectName = this.projectForm.get('projectName')!.value;
-    const newProject: ProjectCreationRequest = { name: projectName };
 
-    this.projectService.createProject(newProject).subscribe((createdProject) => {
-      this.projects.push(createdProject);
-      // Optionally, you can reset the form here.
+    const dialogRef = this.dialog.open(TopBarDialogComponent, {
+      width: '400px', // Set the desired width
+      data: {}, // Pass any data to the modal if needed
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Handle the result returned from the modal
+        console.log('New project created:', result);
+        const newProject: ProjectCreationRequest = { name: result };
+        this.projectService.createProject(newProject).subscribe((createdProject) => {
+          this.projects.push(createdProject);
+          // Optionally, you can reset the form here.
+          this.selectProject(createdProject.id);
+        });
+        // You may want to refresh the project list or update the UI
+      }
+    });
+    
+  }
+
+  
+  selectProject(projectId: string): void {
+    this.projectService.setSelectedProjectId(projectId);
+    this.selectedProjectId = projectId;
   }
 }
 
