@@ -4,8 +4,11 @@ package fr.ogier.tools.productivity.todolist.service;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 import fr.ogier.tools.productivity.todolist.repository.TaskRepository;
+import fr.ogier.tools.productivity.todolist.repository.ProjectRepository;
 import fr.ogier.tools.productivity.todolist.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.List;
@@ -17,7 +20,10 @@ import java.util.Map;
 @Service
 public class TaskService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
+
     private final TaskRepository taskRepository;
+    private final ProjectRepository projectRepository;
 
     public static final String STATUS_TODO = "ToDo";
     public static final String STATUS_INPROGRESS = "In Progress";
@@ -26,31 +32,32 @@ public class TaskService {
     
 
     @Autowired
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
+        this.projectRepository = projectRepository;
     }
     
     // Implement your task retrieval logic here
     public List<Task> getTasks(Boolean archive, String projectId) {
-        if (archive == null && projectId == null) {
+        if (archive == null && (projectId == null || projectId.compareTo("all")==0)) {
             // No filtering, return all tasks
-                System.out.println(" No filtering, return all tasks");
+                logger.debug(" No filtering, return all tasks");
             return taskRepository.findAll(Sort.by("orderInList"));
-        } else if (archive != null && projectId == null) {
+        } else if (archive != null && (projectId == null || projectId.compareTo("all")==0)) {
             // Filtering based on archive status
-            System.out.println(" Filtering based on archive status " + archive);
+            logger.debug(" Filtering based on archive status " + archive);
             if (archive) {
                 return taskRepository.findByStatus(STATUS_ARCHIVED, Sort.by("orderInList"));
             } else {
                 return taskRepository.findByStatusNot(STATUS_ARCHIVED, Sort.by("orderInList"));
             }
-        } else if (archive == null && projectId != null) {
+        } else if (archive == null) {
             // Filtering based on project
-                System.out.println(" Filtering based on project");
+                logger.debug(" Filtering based on project");
             return taskRepository.findByProjectId(projectId, Sort.by("orderInList"));
         } else {
             // Filtering based on both archive status and project
-                System.out.println(" Filtering based on both archive status and project : " + archive);
+                logger.debug(" Filtering based on both archive status and project : " + archive);
             if (archive) {
                 return taskRepository.findByStatusAndProjectId(STATUS_ARCHIVED, projectId, Sort.by("orderInList"));
             } else {
@@ -67,6 +74,13 @@ public class TaskService {
     }
     
     public Task createTask(String projectId, TaskCreationRequest taskToCreate) {
+
+        Project project = projectRepository.findById(projectId).orElse(null);
+        if(project==null) {
+            logger.debug("Creation task => Project not found : {} ", projectId);
+            return null;
+        }
+
         // Extract category from the title and set it in the task
         Task task = new Task();
         String title = taskToCreate.getTitle();
@@ -113,33 +127,33 @@ public class TaskService {
                 existingTask.setTitle(taskUpdateRequest.getTitle());
                 taskUpdated = true;
                 
-        System.out.println(" - Update - setTitle");
+        logger.debug(" - Update - setTitle");
             }
             if (taskUpdateRequest.getActor() != null && existingTask.getActor() !=null  && taskUpdateRequest.getActor().compareTo(existingTask.getActor())!=0) {
                 existingTask.setActor(taskUpdateRequest.getActor());
                 taskUpdated = true;
-                System.out.println(" - Update - getActor");
+                logger.debug(" - Update - getActor");
             }
             if (taskUpdateRequest.getDescription() != null && existingTask.getDescription() !=null  && taskUpdateRequest.getDescription().compareTo(existingTask.getDescription())!=0) {
                 existingTask.setDescription(taskUpdateRequest.getDescription());
                 taskUpdated = true;
-                System.out.println(" - Update - getDescription");
+                logger.debug(" - Update - getDescription");
             }
             if (taskUpdateRequest.getCategory() != null && existingTask.getCategory() !=null  && taskUpdateRequest.getCategory().compareTo(existingTask.getCategory())!=0) {
                 existingTask.setCategory(taskUpdateRequest.getCategory());
                 taskUpdated = true;
-                System.out.println(" - Update - getCategory");
+                logger.debug(" - Update - getCategory");
             }
             if (taskUpdateRequest.getEstimate() != null && existingTask.getEstimate() !=null  && taskUpdateRequest.getEstimate().compareTo(existingTask.getEstimate())!=0) {
                 existingTask.setEstimate(taskUpdateRequest.getEstimate());
                 taskUpdated = true;
-                System.out.println(" - Update - getEstimate");
+                logger.debug(" - Update - getEstimate");
             }
 
             // Update the updateDate field if the task has been genuinely updated
             if (taskUpdated) {
                 existingTask.setUpdateDate(LocalDateTime.now());
-                System.out.println(" - Update - update date");
+                logger.debug(" - Update - update date");
             }
 
             // Save the updated task
@@ -159,7 +173,7 @@ public class TaskService {
             String currentStatus = task.getStatus();
             String newStatus = getNextStatus(currentStatus);
 
-            System.out.println(" - updateTaskStatus - getNextStatus=" + newStatus);
+            logger.debug(" - updateTaskStatus - getNextStatus=" + newStatus);
 
             if (newStatus != null) {
                 // Set the update date if the status has been updated
@@ -169,7 +183,7 @@ public class TaskService {
                 // Update startDate and endDate based on the new status if needed
                 updateStartAndEndDate(task);
 
-                System.out.println(" - updateTaskStatus - updated");
+                logger.debug(" - updateTaskStatus - updated");
 
 
                 // Save the updated task
@@ -246,5 +260,22 @@ public class TaskService {
 
         taskRepository.saveAll(tasksToArchive);
 
+    }
+
+    
+    public void purgeTasks(String projectId) {
+        // Implement logic to archive tasks with status 'toArchive' and set status to 'archived'
+        List<Task> tasksToPurge = taskRepository.findByStatusAndProjectId(STATUS_ARCHIVED, projectId, null);
+
+        taskRepository.deleteAll(tasksToPurge);
+
+    }
+
+
+    public void deleteAllProjectTasks(String projectId) {
+         // Implement logic to archive tasks with status 'toArchive' and set status to 'archived'
+         List<Task> tasksToDelete = taskRepository.findByProjectId(projectId, null);
+
+         taskRepository.deleteAll(tasksToDelete);
     }
 }

@@ -7,12 +7,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import fr.ogier.tools.productivity.todolist.service.TaskService;
 import fr.ogier.tools.productivity.todolist.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects/{projectId}/tasks")
 public class TaskController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
 
     private final TaskService taskService;
 
@@ -29,7 +33,12 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<Task> createTask(@PathVariable String projectId, @RequestBody TaskCreationRequest task) {
         Task createdTask = taskService.createTask(projectId, task);
-        return new ResponseEntity<>(createdTask, HttpStatus.OK);
+        if (createdTask != null) {
+            logger.debug("Task created : {}", createdTask.getId());
+            return new ResponseEntity<>(createdTask, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/{taskId}")
@@ -75,4 +84,9 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/purge")
+    public ResponseEntity<Void> purgeTasks(@PathVariable String projectId) {
+        taskService.purgeTasks(projectId);
+        return ResponseEntity.ok().build();
+    }
 }

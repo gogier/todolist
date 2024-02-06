@@ -22,7 +22,7 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class TodoListComponent implements OnInit {
   newTaskForm = this.formBuilder.group({
-    title: '',
+    'title': '',
   });
 
   updateTaskForm = this.formBuilder.group({
@@ -32,13 +32,14 @@ export class TodoListComponent implements OnInit {
     description: '',
     category: '',
     estimate: '',
+    projectId: '',
     status:'',
-    orderInList: 0,
-    creationDate: null,
-    updateDate: null,
-    startDate: null,
-    endDate: null,
-  })
+    orderInList: '',
+    creationDate: '', //at creation
+    updateDate: '', //when updated
+    startDate: '', //when status to in progress
+    endDate: '' //when status to done
+  });
 
   tasks:Task[] = [];
   archivedTasks:Task[] = [];
@@ -48,6 +49,7 @@ export class TodoListComponent implements OnInit {
   currentTaskToUpdate: Task = {} as Task;
 
   selectedProjectId: string = "all";
+  isAllProjectsSelected: boolean = false;
 
   /* On init : SORT Task */
   ngOnInit() {
@@ -55,10 +57,11 @@ export class TodoListComponent implements OnInit {
     this.projectService.selectedProjectId$.subscribe((projectId) => {
       if(projectId==null) {
         this.selectedProjectId = "all";
+        //this.newTaskForm.controls['title'].disable();
       } else {
         this.selectedProjectId = projectId;
+        //this.newTaskForm.controls['title'].enable();
       }
-
       
       this.loadTasks();
       // Fetch tasks based on the selected project ID
@@ -79,13 +82,14 @@ export class TodoListComponent implements OnInit {
     const newTaskRequest: TaskCreationRequest = {
       title: this.newTaskForm.get('title')!.value,
       actor: configUser.username,
-      description: '', // Provide a default value or adjust as needed
-      project: '', // Provide a default value or adjust as needed
-      estimate: '' // Provide a default value or adjust as needed
+      description: '', 
+      project: '', 
+      estimate: '' 
     };
 
     this.todolistService.createTask(this.selectedProjectId, newTaskRequest).subscribe(
       (newTask) => {
+        console.debug("New task created : " + newTask.id);
         this.tasks.unshift(newTask); // Add the new task at the beginning of the list
         this.newTaskForm.reset(); // Reset the form after adding the task
       },
@@ -128,6 +132,11 @@ export class TodoListComponent implements OnInit {
     this.updateTaskForm.setValue(task);
   }
 
+  compareEstimateValue = (obj1: String, obj2: String) => {
+    console.debug("Object1 =" + obj1 + " - Object2 =" + obj2);
+    return obj1 == obj2;
+  }
+
   updateTask() {
 
     this.tasks.forEach(item =>{
@@ -136,9 +145,7 @@ export class TodoListComponent implements OnInit {
           item.actor= this.updateTaskForm.value.actor;
           item.description= this.updateTaskForm.value.description;
           item.category= this.updateTaskForm.value.category;
-          item.status= this.updateTaskForm.value.status;
-          item.estimate= this.updateTaskForm.value.estimate; 
-          item.updateDate= new Date();
+          item.estimate= this.updateTaskForm.value.estimate;
 
           this.saveTask(item);
         }
@@ -150,9 +157,7 @@ export class TodoListComponent implements OnInit {
         item.actor= this.updateTaskForm.value.actor;
         item.description= this.updateTaskForm.value.description;
         item.category= this.updateTaskForm.value.category;
-        item.status= this.updateTaskForm.value.status;
-        item.estimate= this.updateTaskForm.value.estimate; 
-        item.updateDate= new Date();
+        item.estimate= this.updateTaskForm.value.estimate;
 
         this.saveTask(item);
       }
@@ -297,7 +302,19 @@ export class TodoListComponent implements OnInit {
     return item.status === TaskStatus.Archived;
   }
 
-
+  purgeTasks() {
+    this.todolistService.purgeTasks(this.selectedProjectId).subscribe(
+      () => {
+        console.log('Status updated on the server side.');
+        
+        this.loadTasks();
+      },
+      (error) => {
+        // Handle error if needed
+        console.error('Error updating status on the server side:', error);
+      }
+    );
+  }
 }
 
 /*

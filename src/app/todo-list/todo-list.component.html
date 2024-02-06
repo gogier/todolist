@@ -18,8 +18,8 @@
       </mat-form-field>
        <mat-form-field appearance="fill" class="formfield-full-width">
         <mat-label>Estimate</mat-label>
-        <mat-select (selectionChange)="updateTask()" formControlName="estimate">
-          <mat-option>None</mat-option>
+        <mat-select (selectionChange)="updateTask()" formControlName="estimate" >
+          <mat-option value="">None</mat-option>
           <mat-option value="15m">15m</mat-option>
           <mat-option value="30m">30m</mat-option>
           <mat-option value="1h">1h</mat-option>
@@ -44,7 +44,7 @@
     <form [formGroup]="newTaskForm">
       <mat-form-field class="formfield-full-width" appearance="fill">
         <mat-label>Add your task here</mat-label>
-        <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" (keyup.enter)="addNewTask()"/>
+        <input matInput placeholder="[Category] New task title @actor" id="title" type="text" formControlName="title" [disabled]="isAllProjectsSelected" (keyup.enter)="addNewTask()"/>
       </mat-form-field> 
     </form>
     <div class="todo-list-archive">
@@ -66,6 +66,9 @@
     <mat-divider></mat-divider>
     <mat-divider></mat-divider>
     <h1>Archive</h1>
+    <div class="todo-list-archive">
+      <button mat-stroked-button (click)="purgeTasks()"><mat-icon>delete_sweep</mat-icon><mat-label>Purge</mat-label></button>
+    </div>
     <mat-divider></mat-divider>
     <mat-divider></mat-divider>
     <table cdkDropList class="todo-list" (cdkDropListDropped)="drop($event)">

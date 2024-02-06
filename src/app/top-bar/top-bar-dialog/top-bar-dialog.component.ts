@@ -29,6 +29,7 @@ export class TopBarDialogComponent {
     // You can use this.projectName to access the entered project name
     this.dialogRef.close(this.projectNameFormControl.value);
   }
+  nothing(): void {}
 }
 
 

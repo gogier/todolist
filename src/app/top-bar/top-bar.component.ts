@@ -6,19 +6,21 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TopBarDialogComponent } from './top-bar-dialog/top-bar-dialog.component';
 import { ProjectService } from '../shared/project.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog.component';
 
 
-@Component({
+@Component({ 
   selector: 'app-top-bar',
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.css']
 })
 export class TopBarComponent {
-  selectedProjectId: string;
+  selectedProject: Project;
+  allProjectsElement: Project={ 'id':'all', 'name': 'All projects', 'selected': false};
   projects: Project[] = [];
 
   constructor(private projectService: ProjectService,public dialog: MatDialog) {
-    this.selectedProjectId = '';
+    this.selectedProject = this.allProjectsElement;
   }
 
   ngOnInit(): void {
@@ -27,11 +29,19 @@ export class TopBarComponent {
 
   loadProjects() {
     this.projectService.getProjects().subscribe((projects) => {
-      this.projects = projects;
+      
 
-      if(this.projects.length>0) {
-        this.selectProject(this.projects[0].id);
+      
+      var currentSelectedProject = projects.find((project) => project.selected === true);
+      if(currentSelectedProject != undefined) {
+        this.selectProject(currentSelectedProject);
+      } else {
+        this.allProjectsElement.selected=true;
+        this.selectProject(this.allProjectsElement);
       }
+      
+      projects.unshift(this.allProjectsElement);
+      this.projects = projects;
     });
   }
 
@@ -50,7 +60,7 @@ export class TopBarComponent {
         this.projectService.createProject(newProject).subscribe((createdProject) => {
           this.projects.push(createdProject);
           // Optionally, you can reset the form here.
-          this.selectProject(createdProject.id);
+          this.selectProject(createdProject);
         });
         // You may want to refresh the project list or update the UI
       }
@@ -59,10 +69,52 @@ export class TopBarComponent {
   }
 
   
-  selectProject(projectId: string): void {
-    this.projectService.setSelectedProjectId(projectId);
-    this.selectedProjectId = projectId;
+  selectProject(project: Project): void {
+    
+    this.projectService.selectProject(project.id).subscribe(() => {
+  
+      this.projectService.setSelectedProjectId(project.id);
+      this.selectedProject = project;
+            
+    });
   }
+  
+  askForProjectDeletionValidation(projectId: string) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: { title: 'Confirmation', message: 'Are you sure you want to delete this project ?' }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // User confirmed deletion
+        this.deleteProject(projectId);
+      }
+    });
+  }
+
+  deleteProject(projectId: string): void {
+
+    this.projectService.deleteProject(projectId).subscribe(() => {
+  
+      const projectToDelete = this.findProjectById(projectId);
+
+      if (projectToDelete) {
+        const index = this.projects.indexOf(projectToDelete);
+        if (index !== -1) {
+          this.projects.splice(index, 1);
+        }
+      } 
+      
+      this.selectProject(this.allProjectsElement);
+            
+    });
+
+  }
+
+  findProjectById(projectId: string): any {
+    return this.projects.find((project) => project.id === projectId);
+  }
+  
 }
 
 

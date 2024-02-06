@@ -21,6 +21,7 @@ import { OrderByPipe } from './order-by.pipe';
 import { FilterByCallbackPipe } from './filter-by-callback.pipe';
 
 import { AppComponent } from './app.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog.component';
 import { TopBarComponent } from './top-bar/top-bar.component';
 import { TopBarDialogComponent } from './top-bar/top-bar-dialog/top-bar-dialog.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
@@ -52,6 +53,7 @@ import { TodoCategoryViewComponent } from './todo-category-view/todo-category-vi
   ],
   declarations: [
     AppComponent,
+    ConfirmationDialogComponent,
     TopBarComponent,
     TopBarDialogComponent,
     TodoListComponent,

@@ -29,4 +29,12 @@ export class ProjectService {
   createProject(project: ProjectCreationRequest): Observable<Project> {
     return this.http.post<Project>(`${this.apiUrl}/projects`, project,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
+
+  deleteProject(projectId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/projects/${projectId}`,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  }
+
+  selectProject(projectId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/projects/${projectId}/select`,{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  }
 }

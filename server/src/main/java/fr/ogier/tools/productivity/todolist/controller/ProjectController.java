@@ -32,5 +32,29 @@ public class ProjectController {
         Project createdProject = projectService.createProject(projectCreationRequest);
         return new ResponseEntity<>(createdProject, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<String> deleteProject(@PathVariable String projectId) {
+        // Assuming you have a service to handle project deletion
+        boolean deleted = projectService.deleteProject(projectId);
+
+        if (deleted) {
+            return ResponseEntity.ok("true");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{projectId}/select")
+    public ResponseEntity<String> selectProject(@PathVariable String projectId) {
+        // Assuming you have a service to handle project deletion
+        boolean selected = projectService.selectProject(projectId);
+
+        if (selected) {
+            return ResponseEntity.ok("true");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 

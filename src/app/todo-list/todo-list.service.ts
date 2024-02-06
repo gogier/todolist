@@ -57,4 +57,8 @@ export class TodoListService {
   archiveTasks(projectId: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/projects/${projectId}/tasks/archive`, {},{ "headers" : { "access-Control-Allow-Origin" : "*"}});
   }
+
+  purgeTasks(projectId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/projects/${projectId}/tasks/purge`, {},{ "headers" : { "access-Control-Allow-Origin" : "*"}});
+  }
 }

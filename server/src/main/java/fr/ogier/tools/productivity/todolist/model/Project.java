@@ -11,6 +11,7 @@ public class Project {
     @Id
     private String id;
     private String name;
+    private Boolean selected;
 
     // Constructors, getters, and setters
 }
